@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS cho nút In (giữ nguyên) */
+        .btn-print {
+            padding: 10px 20px;
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+        .btn-print:hover {
+            background-color: #e0a800;
+        }
+        
+        /* CSS cho bản in (giữ nguyên) */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .printable-content, .printable-content * {
+                visibility: visible;
+            }
+            .printable-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .no-print {
+                display: none !important;
+            }
+            /* (MỚI) Ẩn header và các section khác khi in */
+            .header, #login-section, #dashboard-section, .modal {
+                display: none !important;
+            }
+            
+            /* (MỚI) Style riêng cho In Hóa Đơn */
+            #invoice-modal-content {
+                 visibility: visible !important;
+                 box-shadow: none;
+                 border: none;
+                 margin: 0;
+                 padding: 0;
+                 max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-section">
+        
+        <div class="header no-print">
+            <div class="header-content">
+                <div class="user-info">
+                    Chào mừng, <strong id="user-name"></strong>! 
+                    (<span id="user-role"></span>)
+                </div>
+                <button id="logout-btn" class="btn-logout">Đăng xuất</button>
+            </div>
+        </div>
+
+        <div class="admin-container">
+            <h1>Hệ thống</h1>
+
+            <section id="revenue-section" class="revenue-section">
+                <h2>📈 Quản Lý Doanh Thu</h2>
+                <div class="no-print">
+                    <p>Doanh thu được tính từ các đơn hàng có trạng thái "Hoàn thành".</p>
+                    <button id="print-revenue-btn" class="btn-print">In Báo Cáo Doanh Thu</button>
+                </div>
+                
+                <div id="revenue-message-container" class="message"></div>
+                
+                <div class="printable-content">
+                    <h3 style="text-align: center;">BÁO CÁO DOANH THU THEO NGÀY</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Tổng Doanh Thu (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="revenue-list-body"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="font-weight: bold;">TỔNG CỘNG</td>
+                                <td id="total-revenue" style="font-weight: bold;">0 đ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </section>
+            
+            <hr id="divider-admin" class="no-print" style="margin: 40px 0; border: 1px solid #ddd;">
+
+            <section id="employee-section" class="employee-section no-print">
+                <h2>👤 Quản Lý Nhân Viên</h2>
+                <div id="employee-message-container" class="message"></div>
+                <form id="add-employee-form" class="add-form">
+                    <h3>Thêm Nhân Viên Mới</h3>
+                    <div class="form-group">
+                        <label for="hoTen">Họ và Tên:</label>
+                        <input type="text" id="hoTen" name="hoTen" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tenDangNhapNV">Tên Đăng Nhập:</label>
+                        <input type="text" id="tenDangNhapNV" name="tenDangNhap" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="matKhauNV">Mật Khẩu:</label>
+                        <input type="password" id="matKhauNV" name="matKhau" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Thêm Nhân Viên</button>
+                </form>
+
+                <h3>👥 Danh Sách Nhân Viên</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã Người Dùng</th>
+                            <th>Họ và Tên</th>
+                            <th>Tên Đăng Nhập</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employee-list-body"></tbody>
+                </table>
+            </section>
+
+            <section id="order-section" class="order-section no-print">
+                <h2>📦 Quản Lý Đơn Hàng</h2>
+                <div id="order-message-container" class="message"></div>
+                <h3>Danh Sách Đơn Hàng</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã ĐH</th>
+                            <th>Ngày Đặt</th>
+                            <th>Khách Hàng</th>
+                            <th>Tổng Tiền</th>
+                            <th>Trạng Thái</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-list-body"></tbody>
+                </table>
+            </section>
+
+            <hr id="divider-staff-1" class="no-print" style="margin: 40px 0; border: 1px solid #ddd;">
+
+            <section id="product-section" class="product-section no-print">
+                <h2>👕 Quản Lý Sản Phẩm</h2>
+                <div id="product-message-container" class="message"></div>
+                
+                <form id="add-product-form" class="add-form">
+                    <h3>Thêm Sản Phẩm Mới</h3>
+                    <div class="form-group">
+                        <label for="tenSanPham">Tên Sản Phẩm:</label>
+                        <input type="text" id="tenSanPham" name="tenSanPham" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gia">Giá (VNĐ):</label>
+                        <input type="number" id="gia" name="gia" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maDanhMuc">Danh Mục:</label>
+                        <select id="maDanhMuc" name="maDanhMuc" required>
+                            <option value="">-- Đang tải danh mục... --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hinhAnhURL">Link Hình Ảnh (URL):</label>
+                        <input type="text" id="hinhAnhURL" name="hinhAnhURL" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="moTa">Mô Tả:</label>
+                        <textarea id="moTa" name="moTa" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Thêm Sản Phẩm</button>
+                </form>
+
+                <h3>Danh Sách Sản Phẩm</h3>
+                
+                <div id="product-category-filters" class="category-filters no-print">
+                    </div>
+                
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Hình Ảnh</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Danh Mục</th>
+                            <th>Giá</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list-body">
+                        </tbody>
+                </table>
+            </section>
+
+            <hr id="divider-staff-2" class="no-print" style="margin: 40px 0; border: 1px solid #ddd;">
+
+            <section id="customer-section" class="customer-section no-print">
+                <h2>👥 Quản Lý Khách Hàng</h2>
+                <div id="customer-message-container" class="message"></div>
+                
+                <form id="add-customer-form" class="add-form">
+                    <h3>Thêm Khách Hàng Mới</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="custHoTen">Họ và Tên:</label>
+                            <input type="text" id="custHoTen" name="hoTen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="custTenDangNhap">Tên Đăng Nhập:</label>
+                            <input type="text" id="custTenDangNhap" name="tenDangNhap" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="custMatKhau">Mật Khẩu:</label>
+                            <input type="password" id="custMatKhau" name="matKhau" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="custDienThoai">Điện Thoại:</label>
+                            <input type="text" id="custDienThoai" name="dienThoai">
+                        </div>
+                    </div>
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="custEmail">Email:</label>
+                            <input type="email" id="custEmail" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="custGioiTinh">Giới Tính:</label>
+                            <select id="custGioiTinh" name="gioiTinh">
+                                <option value="Khác">Khác</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="custDiaChi">Địa Chỉ:</label>
+                        <textarea id="custDiaChi" name="diaChi" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Thêm Khách Hàng</button>
+                </form>
+
+                <div class="search-bar">
+                    <input type="search" id="customer-search-input" placeholder="Tìm kiếm theo Tên, SĐT, Email, Tên đăng nhập...">
+                    <button id="customer-search-btn">Tìm Kiếm</button>
+                </div>
+
+                <h3>Danh Sách Khách Hàng</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã KH</th>
+                            <th>Họ và Tên</th>
+                            <th>Tên Đăng Nhập</th>
+                            <th>Email</th>
+                            <th>Điện Thoại</th>
+                            <th>Địa Chỉ</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customer-list-body"></tbody>
+                </table>
+            </section>
+            
+            <hr id="divider-staff-3" class="no-print" style="margin: 40px 0; border: 1px solid #ddd;">
+            <section id="review-management-section" class="review-management-section no-print">
+                <h2>⭐ Quản Lý Đánh Giá</h2>
+                <div id="review-management-message-container" class="message"></div>
+                <h3>Danh Sách Đánh Giá Mới Nhất</h3>
+                <div id="review-management-list">
+                    </div>
+            </section>
+
+        </div>
+    </div>
+
+
+    <div id="edit-product-modal" class="modal no-print" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="edit-product-modal">&times;</span>
+            <h2>Chỉnh sửa Sản phẩm</h2>
+            <div id="edit-product-message-container" class="message"></div>
+            
+            <form id="edit-product-form" class="add-form">
+                <input type="hidden" id="editMaSanPham" name="maSanPham">
+                
+                <div class="form-group">
+                    <label for="editTenSanPham">Tên Sản Phẩm:</label>
+                    <input type="text" id="editTenSanPham" name="tenSanPham" required>
+                </div>
+                <div class="form-group">
+                    <label for="editGia">Giá (VNĐ):</label>
+                    <input type="number" id="editGia" name="gia" required>
+                </div>
+                <div class="form-group">
+                    <label for="editMaDanhMuc">Danh Mục:</label>
+                    <select id="editMaDanhMuc" name="maDanhMuc" required>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="editHinhAnhURL">Link Hình Ảnh (URL):</label>
+                    <input type="text" id="editHinhAnhURL" name="hinhAnhURL" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="editMoTa">Mô Tả:</label>
+                    <textarea id="editMoTa" name="moTa" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-submit" style="background-color: #007bff;">Lưu Thay Đổi</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="order-details-modal" class="modal no-print" style="display:none;">
+        <div id="invoice-modal-content" class="modal-content printable-content" style="max-width: 800px;">
+            <span class="close-modal no-print" data-modal="order-details-modal">&times;</span>
+            
+            <h2>Chi Tiết Hóa Đơn</h2>
+            <div id="invoice-details">
+                </div>
+            
+            <button class="btn-print no-print" onclick="window.print()">In Hóa Đơn</button>
+        </div>
+    </div>
+    
+    <div id="edit-customer-modal" class="modal no-print" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="edit-customer-modal">&times;</span>
+            <h2>Chỉnh sửa Khách hàng</h2>
+            <div id="edit-customer-message-container" class="message"></div>
+            
+            <form id="edit-customer-form" class="add-form">
+                <input type="hidden" id="editMaKhachHang" name="maKhachHang">
+                
+                 <div class="form-row">
+                    <div class="form-group">
+                        <label for="editCustHoTen">Họ và Tên:</label>
+                        <input type="text" id="editCustHoTen" name="hoTen" required>
+                    </div>
+                    <div class="form-group">
+                         <label for="editCustEmail">Email:</label>
+                        <input type="email" id="editCustEmail" name="email">
+                    </div>
+                </div>
+                <div class="form-row">
+                     <div class="form-group">
+                        <label for="editCustDienThoai">Điện Thoại:</label>
+                        <input type="text" id="editCustDienThoai" name="dienThoai">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCustGioiTinh">Giới Tính:</label>
+                        <select id="editCustGioiTinh" name="gioiTinh">
+                            <option value="Khác">Khác</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="editCustDiaChi">Địa Chỉ:</label>
+                    <textarea id="editCustDiaChi" name="diaChi" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editCustMatKhau">Mật khẩu mới (Bỏ trống nếu không đổi):</label>
+                    <input type="password" id="editCustMatKhau" name="matKhau" placeholder="Nhập mật khẩu mới...">
+                </div>
+                <button type="submit" class="btn-submit" style="background-color: #007bff;">Lưu Thay Đổi</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // ----------------------------------------------------------------------
+        // CÁC HÀM TRỢ GIÚP (Helpers)
+        // ----------------------------------------------------------------------
+        
+        // Hàm định dạng số tiền
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+        }
+
+        // Hàm hiển thị thông báo
+        function showMessage(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.textContent = message;
+                container.className = `message ${type}`;
+                container.style.display = 'block';
+                setTimeout(() => {
+                    container.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Hàm định dạng ngày
+        function formatNgay(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+        };
+
+
+        // ----------------------------------------------------------------------
+        // LOGIC ĐĂNG NHẬP / ĐĂNG XUẤT / BẢO MẬT
+        // ----------------------------------------------------------------------
+
+        // (Đã Sửa) Hiển thị giao diện chính (Dashboard) THEO VAI TRÒ
+        function showDashboard(user) {
+            // (SỬA LỖI) Chỉ cần hiển thị dashboard, không cần ẩn login-section
+            document.getElementById('dashboard-section').style.display = 'block';
+            
+            // Điền thông tin user
+            document.getElementById('user-name').textContent = user.hoTen;
+            document.getElementById('user-role').textContent = user.role;
+            
+            // PHÂN QUYỀN GIAO DIỆN NGHIÊM NGẶT (THEO USE CASE)
+            if (user.role === 'Quản lý') {
+                // Admin (Quản lý) CHỈ thấy Doanh thu, Nhân viên
+                document.getElementById('revenue-section').style.display = 'block';
+                document.getElementById('divider-admin').style.display = 'block';
+                document.getElementById('employee-section').style.display = 'block';
+                
+                // ẨN PHẦN CỦA NHÂN VIÊN
+                document.getElementById('order-section').style.display = 'none';
+                document.getElementById('divider-staff-1').style.display = 'none';
+                document.getElementById('product-section').style.display = 'none'; 
+                document.getElementById('divider-staff-2').style.display = 'none';
+                document.getElementById('customer-section').style.display = 'none';
+                document.getElementById('divider-staff-3').style.display = 'none'; // (MỚI)
+                document.getElementById('review-management-section').style.display = 'none'; // (MỚI)
+                
+                // Tải dữ liệu cho Admin
+                loadRevenue();
+                loadEmployees();
+                
+            } else if (user.role === 'Nhân viên') {
+                // Nhân viên CHỈ thấy Đơn hàng, Sản phẩm, Khách hàng, Đánh giá
+                document.getElementById('revenue-section').style.display = 'none'; 
+                document.getElementById('divider-admin').style.display = 'none'; 
+                document.getElementById('employee-section').style.display = 'none';
+                
+                // HIỆN PHẦN CỦA NHÂN VIÊN
+                document.getElementById('order-section').style.display = 'block';
+                document.getElementById('divider-staff-1').style.display = 'block';
+                document.getElementById('product-section').style.display = 'block'; 
+                document.getElementById('divider-staff-2').style.display = 'block';
+                document.getElementById('customer-section').style.display = 'block';
+                document.getElementById('divider-staff-3').style.display = 'block'; // (MỚI)
+                document.getElementById('review-management-section').style.display = 'block'; // (MỚI)
+                
+                // Tải dữ liệu cho Nhân viên
+                loadCategories(); 
+                loadProducts(); 
+                loadOrders(); 
+                loadCustomers(); 
+                loadStaffReviews(); // (MỚI)
+            }
+        }
+
+        // (SỬA LỖI) Chuyển hướng về trang login.html
+        function redirectToLogin() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            window.location.href = 'login.html'; // Chuyển hướng
+        }
+
+        // Xử lý Form Đăng nhập (ĐÃ BỊ XÓA)
+        // async function handleLogin(event) { ... }
+
+        // Xử lý Đăng xuất
+        async function handleLogout() {
+            try {
+                await fetch('/api/logout');
+                redirectToLogin(); // (SỬA LỖI) Hiển thị lại form đăng nhập
+            } catch (error) {
+                console.error('Lỗi đăng xuất:', error);
+            }
+        }
+
+        // Kiểm tra session khi tải trang
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/check-session');
+                const result = await response.json();
+                
+                if (result.success) {
+                    if (result.user.role === 'Quản lý' || result.user.role === 'Nhân viên') {
+                        showDashboard(result.user); // (ĐÃ PHÂN QUYỀN)
+                    } else {
+                        // Là Khách hàng nhưng đang ở trang Admin, đá về shop
+                        window.location.href = 'shop.html';
+                    }
+                } else {
+                    redirectToLogin(); // (SỬA LỖI) Chưa đăng nhập, chuyển về login.html
+                }
+            } catch (error) {
+                redirectToLogin(); // (SỬA LỖI) Lỗi kết nối, chuyển về login.html
+            }
+        }
+
+        
+        // ----------------------------------------------------------------------
+        // D. LOGIC TẢI DOANH THU (Dành cho Admin)
+        // ----------------------------------------------------------------------
+        async function loadRevenue() {
+            const tableBody = document.getElementById('revenue-list-body');
+            const totalRevenueEl = document.getElementById('total-revenue');
+            tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Đang tải...</td></tr>';
+            totalRevenueEl.textContent = '0 đ';
+            
+            let tongCong = 0;
+
+            try {
+                const response = await fetch('/api/doanh-thu');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    tableBody.innerHTML = ''; 
+                    
+                    result.data.forEach(item => {
+                        const tongTheoNgay = parseFloat(item.TongDoanhThu);
+                        tongCong += tongTheoNgay;
+
+                        const row = tableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${formatNgay(item.Ngay)}</td>
+                            <td class="revenue-amount">${formatCurrency(tongTheoNgay)}</td> 
+                        `;
+                    });
+
+                    totalRevenueEl.textContent = formatCurrency(tongCong);
+
+                } else if (result.success && result.data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Chưa có doanh thu nào.</td></tr>';
+                } else {
+                    showMessage('revenue-message-container', result.message, 'error');
+                    tableBody.innerHTML = `<tr><td colspan="2" style="text-align:center;">${result.message}</td></tr>`;
+                }
+
+            } catch (error) {
+                console.error('Lỗi khi tải doanh thu:', error);
+                showMessage('revenue-message-container', 'Lỗi: Bạn không có quyền xem Doanh thu.', 'error');
+                tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Không có quyền truy cập.</td></tr>';
+            }
+        }
+        
+        // ----------------------------------------------------------------------
+        // E. LOGIC IN BÁO CÁO DOANH THU (Dành cho Admin)
+        // ----------------------------------------------------------------------
+        function handlePrintRevenue() {
+            // Logic in của Doanh thu (phần .printable-content)
+            window.print();
+        }
+
+
+        // ----------------------------------------------------------------------
+        // F. LOGIC QUẢN LÝ NHÂN VIÊN (Dành cho Admin)
+        // ----------------------------------------------------------------------
+        async function handleAddEmployee(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/them-nhan-vien', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('employee-message-container', result.message, 'success');
+                    form.reset(); 
+                    loadEmployees(); 
+                } else {
+                    showMessage('employee-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('employee-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+
+        async function loadEmployees() {
+            const tableBody = document.getElementById('employee-list-body');
+            tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Đang tải...</td></tr>';
+
+            try {
+                const response = await fetch('/api/nhan-vien');
+                const result = await response.json();
+                if (result.success && result.data.length > 0) {
+                    tableBody.innerHTML = ''; 
+                    result.data.forEach(nv => {
+                        const row = tableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${nv.MaNguoiDung}</td>
+                            <td>${nv.HoTen}</td>
+                            <td>${nv.TenDangNhap}</td>
+                            <td>
+                                <button class="btn-delete" data-type="employee" data-id="${nv.MaNguoiDung}">Xóa</button>
+                            </td>
+                        `;
+                    });
+                } else if (result.success && result.data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Chưa có nhân viên nào.</td></tr>';
+                } else {
+                    showMessage('employee-message-container', result.message, 'error');
+                    tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Lỗi tải dữ liệu.</td></tr>';
+                }
+            } catch (error) {
+                showMessage('employee-message-container', 'Lỗi: Bạn không có quyền xem danh sách Nhân viên.', 'error');
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Không có quyền truy cập.</td></tr>';
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // G. LOGIC QUẢN LÝ SẢN PHẨM (Dành cho Nhân viên)
+        // ----------------------------------------------------------------------
+        
+        // (SỬA LỖI) Hàm trợ giúp lấy URL ảnh (thay thế null/"" VÀ xử lý lỗi 404)
+        function getProductImageUrl(url) {
+            const placeholder = 'https://placehold.co/100x100/EEE/333?text=No+Image';
+            if (url && url.trim() !== '') {
+                // Trả về URL và thêm 'onerror' để bắt lỗi 404 (link hỏng)
+                return `src="${url}" onerror="this.src='${placeholder}';"`;
+            }
+            // Trả về placeholder nếu URL là null hoặc ""
+            return `src="${placeholder}"`;
+        }
+
+        // Tải danh mục vào dropdown (Cập nhật: Tải cho cả 2 form VÀ TABS LỌC)
+        async function loadCategories() {
+            const selectAdd = document.getElementById('maDanhMuc');
+            const selectEdit = document.getElementById('editMaDanhMuc'); 
+            const filterContainer = document.getElementById('product-category-filters'); // (MỚI)
+            
+            try {
+                const response = await fetch('/api/danh-muc');
+                const result = await response.json();
+                if (result.success) {
+                    // Xóa "Đang tải" ở cả 2 form
+                    selectAdd.innerHTML = '<option value="">-- Chọn danh mục --</option>'; 
+                    selectEdit.innerHTML = '<option value="">-- Chọn danh mục --</option>'; 
+                    
+                    // (MỚI) Build filter tabs
+                    filterContainer.innerHTML = ''; // Clear old tabs
+                    const allTab = document.createElement('button');
+                    allTab.className = 'filter-tab active'; // "Tất cả" is active by default
+                    allTab.textContent = 'Tất cả';
+                    allTab.dataset.category = ''; // Empty string for "all"
+                    filterContainer.appendChild(allTab);
+                    
+                    result.data.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.MaDanhMuc;
+                        option.textContent = cat.TenDanhMuc;
+                        
+                        selectAdd.appendChild(option);
+                        selectEdit.appendChild(option.cloneNode(true));
+                        
+                        // (MỚI) Add tab for this category
+                        const tab = document.createElement('button');
+                        tab.className = 'filter-tab';
+                        tab.textContent = cat.TenDanhMuc;
+                        tab.dataset.category = cat.TenDanhMuc;
+                        filterContainer.appendChild(tab);
+                    });
+                }
+            } catch (error) {
+                selectAdd.innerHTML = '<option value="">-- Lỗi tải danh mục --</option>';
+                selectEdit.innerHTML = '<option value="">-- Lỗi tải danh mục --</option>';
+                filterContainer.innerHTML = '<p class="message error">Lỗi tải danh mục.</p>';
+            }
+        }
+
+        // Tải danh sách sản phẩm (CẬP NHẬT: Chấp nhận lọc theo category)
+        async function loadProducts(categoryName = '') { // (MỚI) Thêm tham số
+            const tableBody = document.getElementById('product-list-body');
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Đang tải sản phẩm...</td></tr>';
+            
+            try {
+                // (MỚI) Thêm tham số lọc vào URL
+                const response = await fetch(`/api/san-pham?category=${encodeURIComponent(categoryName)}`);
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    tableBody.innerHTML = '';
+                    result.data.forEach(sp => {
+                        const row = tableBody.insertRow();
+                        // (SỬA LỖI) Gọi hàm getProductImageUrl
+                        const imageUrlHtml = getProductImageUrl(sp.HinhAnhURL); 
+                        
+                        row.innerHTML = `
+                            <td>
+                                <img ${imageUrlHtml} 
+                                 alt="${sp.TenSanPham}" 
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                            </td>
+                            <td>${sp.TenSanPham}</td>
+                            <td>${sp.TenDanhMuc || 'N/A'}</td>
+                            <td>${formatCurrency(parseFloat(sp.Gia))}</td>
+                            <td>
+                                <button class="btn-edit" data-type="product" data-id="${sp.MaSanPham}">Sửa</button>
+                                <button class="btn-delete" data-type="product" data-id="${sp.MaSanPham}">Xóa</button>
+                            </td>
+                        `;
+                    });
+                } else if (result.success && result.data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">${categoryName ? 'Không có sản phẩm' : 'Chưa có sản phẩm nào.'}</td></tr>`;
+                } else {
+                    showMessage('product-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('product-message-container', 'Lỗi: Bạn không có quyền xem Sản phẩm.', 'error');
+            }
+        }
+
+        // Thêm sản phẩm (Giữ nguyên)
+        async function handleAddProduct(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/san-pham', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('product-message-container', result.message, 'success');
+                    form.reset();
+                    loadProducts(); // Tải lại danh sách sản phẩm
+                } else {
+                    showMessage('product-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('product-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        // Mở Modal Chỉnh sửa
+        async function openEditModal(modalId, id, type) {
+            const modal = document.getElementById(modalId);
+            try {
+                // 1. Gọi API lấy chi tiết
+                const response = await fetch(`/api/${type}/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    
+                    // 2. Đổ dữ liệu vào form chỉnh sửa (tùy loại)
+                    if(type === 'san-pham') { // (SỬA LỖI)
+                        document.getElementById('editMaSanPham').value = data.MaSanPham;
+                        document.getElementById('editTenSanPham').value = data.TenSanPham;
+                        document.getElementById('editGia').value = parseFloat(data.Gia);
+                        document.getElementById('editMaDanhMuc').value = data.MaDanhMuc;
+                        document.getElementById('editHinhAnhURL').value = data.HinhAnhURL;
+                        document.getElementById('editMoTa').value = data.MoTa;
+                    } else if (type === 'khach-hang') { // (SỬA LỖI)
+                        document.getElementById('editMaKhachHang').value = data.MaNguoiDung;
+                        document.getElementById('editCustHoTen').value = data.HoTen;
+                        document.getElementById('editCustEmail').value = data.Email;
+                        document.getElementById('editCustDienThoai').value = data.DienThoai;
+                        document.getElementById('editCustGioiTinh').value = data.GioiTinh;
+                        document.getElementById('editCustDiaChi').value = data.DiaChi;
+                        document.getElementById('editCustMatKhau').value = ''; // Luôn trống
+                    }
+                    
+                    // 3. Hiển thị modal
+                    modal.style.display = 'block';
+                } else {
+                    alert(`Lỗi: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`Lỗi kết nối khi lấy chi tiết ${type}.`);
+            }
+        }
+        
+        // (Sửa lỗi) Đóng Modal
+        function closeModals(event) {
+             if (event.target.classList.contains('close-modal')) {
+                const modalId = event.target.dataset.modal;
+                document.getElementById(modalId).style.display = 'none';
+            }
+        }
+        
+        // Xử lý Lưu Thay Đổi (Cập nhật Sản phẩm)
+        async function handleUpdateProduct(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const id = data.maSanPham; // Lấy ID từ trường ẩn
+
+            try {
+                const response = await fetch(`/api/san-pham/${id}`, {
+                    method: 'PUT', // Dùng PUT để Cập nhật
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('edit-product-message-container', result.message, 'success');
+                    setTimeout(() => {
+                        document.getElementById('edit-product-modal').style.display = 'none';
+                        loadProducts();
+                    }, 1000);
+                } else {
+                    showMessage('edit-product-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('edit-product-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        // ----------------------------------------------------------------------
+        // (MỚI) H. LOGIC QUẢN LÝ ĐƠN HÀNG (Dành cho Nhân viên)
+        // ----------------------------------------------------------------------
+        
+        // Tải danh sách đơn hàng (SỬA LỖI: Thêm nút "Duyệt")
+        async function loadOrders() {
+            const tableBody = document.getElementById('order-list-body');
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Đang tải đơn hàng...</td></tr>';
+            
+            try {
+                const response = await fetch('/api/don-hang');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    tableBody.innerHTML = '';
+                    result.data.forEach(dh => {
+                        const row = tableBody.insertRow();
+                        
+                        // (SỬA LỖI) Logic Nút bấm/Dropdown theo trạng thái
+                        let statusHtml = '';
+                        const trangThai = dh.TrangThai;
+                        
+                        if (trangThai === 'Chờ Xác Nhận') {
+                            statusHtml = `<button class="btn-action btn-approve" data-id="${dh.MaDonHang}" data-next-status="Đang xử lý">Duyệt Đơn</button>`;
+                        } else if (trangThai === 'Đang xử lý') {
+                            statusHtml = `<button class="btn-action btn-ship" data-id="${dh.MaDonHang}" data-next-status="Đang giao">Gửi Hàng</button>`;
+                        } else if (trangThai === 'Đang giao') {
+                             statusHtml = `<button class="btn-action btn-complete" data-id="${dh.MaDonHang}" data-next-status="Hoàn thành">Hoàn Thành</button>`;
+                        } else if (trangThai === 'Hoàn thành') {
+                            statusHtml = `<span class="status-completed">Đã Hoàn Thành</span>`;
+                        } else if (trangThai === 'Đã hủy') {
+                            statusHtml = `<span class="status-cancelled">Đã Hủy</span>`;
+                        }
+                        
+                        row.innerHTML = `
+                            <td>${dh.MaDonHang}</td>
+                            <td>${formatNgay(dh.NgayDatHang)}</td>
+                            <td>${dh.TenKhachHang || 'N/A'}</td>
+                            <td class="revenue-amount">${formatCurrency(parseFloat(dh.TongTien))}</td>
+                            <td>
+                                ${statusHtml}
+                            </td>
+                            <td>
+                                <button class="btn-invoice" data-type="order" data-id="${dh.MaDonHang}">In HĐ</button>
+                            </td>
+                        `;
+                    });
+                } else if (result.success && result.data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Chưa có đơn hàng nào.</td></tr>';
+                } else {
+                    showMessage('order-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('order-message-container', 'Lỗi: Bạn không có quyền xem Đơn hàng.', 'error');
+            }
+        }
+        
+        // Cập nhật trạng thái đơn hàng (SỬA LỖI: Dùng chung cho các nút)
+        async function updateOrderStatus(id, newStatus) {
+            try {
+                const response = await fetch(`/api/don-hang/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ trangThai: newStatus })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('order-message-container', `Cập nhật đơn hàng #${id} thành "${newStatus}"!`, 'success');
+                    loadOrders(); // Tải lại bảng đơn hàng
+                } else {
+                    showMessage('order-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('order-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        // Mở Modal In Hóa Đơn
+        async function openInvoiceModal(id) {
+            const modal = document.getElementById('order-details-modal');
+            const content = document.getElementById('invoice-details');
+            content.innerHTML = '<p>Đang tải chi tiết hóa đơn...</p>';
+            modal.style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/don-hang/${id}/details`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const { order, items } = result;
+                    let itemsHtml = '';
+                    let subTotal = 0;
+                    
+                    items.forEach(item => {
+                        const total = parseFloat(item.GiaLucDat) * item.SoLuong;
+                        subTotal += total;
+                        itemsHtml += `
+                            <tr>
+                                <td>${item.TenSanPham}</td>
+                                <td style="text-align:center;">${item.SoLuong}</td>
+                                <td class="revenue-amount">${formatCurrency(parseFloat(item.GiaLucDat))}</td>
+                                <td class="revenue-amount">${formatCurrency(total)}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    content.innerHTML = `
+                        <div class="invoice-header">
+                            <h3>HÓA ĐƠN BÁN HÀNG</h3>
+                            <p>Mã ĐH: #${order.MaDonHang}</p>
+                            <p>Ngày: ${formatNgay(order.NgayDatHang)}</g>
+                        </div>
+                        <hr>
+                        <div class="invoice-customer">
+                            <strong>Khách hàng:</strong> ${order.HoTen}<br>
+                            <strong>Điện thoại:</strong> ${order.DienThoai || 'N/A'}<br>
+                            <strong>Địa chỉ:</strong> ${order.DiaChi || 'N/A'}
+                        </div>
+                        <hr>
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>SL</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>${itemsHtml}</tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" style="text-align:right; font-weight: bold;">TỔNG CỘNG</td>
+                                    <td class="revenue-amount">${formatCurrency(subTotal)}</td>
+                                </tr>
+                                 <tr>
+                                    <td colspan="3" style="text-align:right; font-weight: bold; color: red;">TỔNG HÓA ĐƠN</td>
+                                    <td class="revenue-amount" style="color: red;">${formatCurrency(parseFloat(order.TongTien))}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p style="text-align:center; margin-top: 30px;">Cảm ơn quý khách!</p>
+                    `;
+                    
+                } else {
+                    content.innerHTML = `<p class="message error">${result.message}</p>`;
+                }
+            } catch (error) {
+                 content.innerHTML = `<p class="message error">Lỗi kết nối Server.</p>`;
+            }
+        }
+        
+        // ----------------------------------------------------------------------
+        // (MỚI) I. LOGIC QUẢN LÝ KHÁCH HÀNG (Dành cho Nhân viên)
+        // ----------------------------------------------------------------------
+        
+        // (Cập nhật) Tải danh sách khách hàng (có tìm kiếm)
+        async function loadCustomers(searchTerm = '') {
+            const tableBody = document.getElementById('customer-list-body');
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Đang tải khách hàng...</td></tr>';
+            
+            try {
+                // Thêm ?search=... vào API
+                const response = await fetch(`/api/khach-hang?search=${encodeURIComponent(searchTerm)}`);
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    tableBody.innerHTML = '';
+                    result.data.forEach(kh => {
+                        const row = tableBody.insertRow();
+                        row.innerHTML = `
+                            <td>${kh.MaNguoiDung}</td>
+                            <td>${kh.HoTen}</td>
+                            <td>${kh.TenDangNhap}</td>
+                            <td>${kh.Email || 'N/A'}</td>
+                            <td>${kh.DienThoai || 'N/A'}</td>
+                            <td>${kh.DiaChi || 'N/A'}</td>
+                            <td>
+                                <button class="btn-edit" data-type="customer" data-id="${kh.MaNguoiDung}">Sửa</button>
+                                <button class="btn-delete" data-type="customer" data-id="${kh.MaNguoiDung}">Xóa</button>
+                            </td>
+                        `;
+                    });
+                } else if (result.success && result.data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">${searchTerm ? 'Không tìm thấy khách hàng.' : 'Chưa có khách hàng nào.'}</td></tr>`;
+                } else {
+                    showMessage('customer-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('customer-message-container', 'Lỗi: Bạn không có quyền xem Khách hàng.', 'error');
+            }
+        }
+        
+        // (MỚI) Xử lý nút tìm kiếm
+        function handleSearchCustomer() {
+            const searchTerm = document.getElementById('customer-search-input').value;
+            loadCustomers(searchTerm);
+        }
+        
+        // (Cập nhật) Thêm khách hàng (với email, giớitính)
+        async function handleAddCustomer(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/khach-hang', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('customer-message-container', result.message, 'success');
+                    form.reset();
+                    loadCustomers(); // Tải lại danh sách khách hàng
+                } else {
+                    showMessage('customer-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('customer-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        // (MỚI) Xử lý Cập nhật (Lưu) Khách hàng
+        async function handleUpdateCustomer(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const id = data.maKhachHang; 
+
+            try {
+                const response = await fetch(`/api/khach-hang/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('edit-customer-message-container', result.message, 'success');
+                    setTimeout(() => {
+                        document.getElementById('edit-customer-modal').style.display = 'none';
+                        loadCustomers(); // Tải lại bảng khách hàng
+                    }, 1000);
+                } else {
+                    showMessage('edit-customer-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('edit-customer-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        // ----------------------------------------------------------------------
+        // (MỚI) J. LOGIC QUẢN LÝ ĐÁNH GIÁ (Dành cho Nhân viên)
+        // ----------------------------------------------------------------------
+        
+        // Tải tất cả đánh giá
+        async function loadStaffReviews() {
+            const container = document.getElementById('review-management-list');
+            container.innerHTML = '<p>Đang tải đánh giá...</p>';
+            
+            try {
+                const response = await fetch('/api/staff/reviews');
+                const result = await response.json();
+                
+                if (result.success && result.data.length > 0) {
+                    container.innerHTML = '';
+                    result.data.forEach(r => {
+                        const likedClass = r.ShopDaTim ? 'liked' : '';
+                        const replyText = r.ShopTraLoi || '';
+                        
+                        container.innerHTML += `
+                            <div class="staff-review-item">
+                                <div class="staff-review-header">
+                                    <span>Sản phẩm: <strong>${r.TenSanPham}</strong></span>
+                                    <span>Khách hàng: <strong>${r.TenKhachHang}</strong></span>
+                                    <span class="star-rating-display sm">${'★'.repeat(r.SoSao)}${'☆'.repeat(5 - r.SoSao)}</span>
+                                </div>
+                                <p class="review-comment">"${r.BinhLuan || '<i>Không có bình luận</i>'}"</p>
+                                <div class="staff-reply-area">
+                                    <textarea id="reply-text-${r.MaDanhGia}" rows="2" placeholder="Nhập câu trả lời của Shop...">${replyText}</textarea>
+                                    <button class="btn-reply" data-id="${r.MaDanhGia}">Gửi Trả Lời</button>
+                                    <button class="btn-like-review ${likedClass}" data-id="${r.MaDanhGia}" data-liked="${r.ShopDaTim ? '1' : '0'}">
+                                        ❤️ ${r.ShopDaTim ? 'Đã Tim' : 'Thả Tim'}
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else if (result.success) {
+                    container.innerHTML = '<p>Chưa có đánh giá nào.</p>';
+                } else {
+                    showMessage('review-management-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                 showMessage('review-management-message-container', 'Lỗi: Bạn không có quyền xem Đánh giá.', 'error');
+            }
+        }
+        
+        // Xử lý Gửi Trả Lời
+        async function handleReplyReview(id) {
+            const replyText = document.getElementById(`reply-text-${id}`).value;
+            if (!replyText) {
+                showMessage('review-management-message-container', 'Vui lòng nhập nội dung trả lời.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/staff/reviews/${id}/reply`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shopTraLoi: replyText })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('review-management-message-container', 'Gửi trả lời thành công!', 'success');
+                } else {
+                    showMessage('review-management-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('review-management-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        // Xử lý Thả Tim
+        async function handleLikeReview(id, currentLiked) {
+            const isNowLiked = !currentLiked; // Đảo ngược trạng thái
+            
+             try {
+                const response = await fetch(`/api/staff/reviews/${id}/like`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ daTim: isNowLiked })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // Cập nhật giao diện nút
+                    const btn = document.querySelector(`.btn-like-review[data-id="${id}"]`);
+                    btn.dataset.liked = isNowLiked ? '1' : '0';
+                    btn.textContent = `❤️ ${isNowLiked ? 'Đã Tim' : 'Thả Tim'}`;
+                    btn.classList.toggle('liked', isNowLiked);
+                } else {
+                    showMessage('review-management-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('review-management-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+
+        
+        // (CẬP NHẬT) Xử lý Click (Sửa/Xóa/In HĐ/Duyệt Đơn/Trả lời/Tim)
+        async function handleTableClick(event) {
+            const target = event.target;
+            
+            if (!target) return;
+            
+            const id = target.dataset.id;
+            const type = target.dataset.type;
+
+            // Xử lý nút XÓA
+            if (target.classList.contains('btn-delete')) {
+                let url = '';
+                let confirmMessage = '';
+                let loadFunction = null;
+
+                if (type === 'employee') {
+                    url = `/api/xoa-nhan-vien/${id}`;
+                    confirmMessage = `Bạn có chắc chắn muốn xóa nhân viên có Mã: ${id} không?`;
+                    loadFunction = loadEmployees;
+                } else if (type === 'product') {
+                    url = `/api/san-pham/${id}`;
+                    confirmMessage = `Bạn có chắc chắn muốn xóa sản phẩm có Mã: ${id} không?`;
+                    loadFunction = loadProducts;
+                } else if (type === 'customer') { // (MỚI)
+                    url = `/api/khach-hang/${id}`;
+                    confirmMessage = `Bạn có chắc chắn muốn xóa khách hàng có Mã: ${id} không? (Đơn hàng của họ vẫn còn)`;
+                    loadFunction = loadCustomers;
+                }
+                 else {
+                    return;
+                }
+
+                if (confirm(confirmMessage)) {
+                    try {
+                        const response = await fetch(url, { method: 'DELETE' });
+                        const result = await response.json();
+                        if (result.success) {
+                            alert(result.message);
+                            if (loadFunction) loadFunction(); // Tải lại bảng
+                        } else {
+                            alert(`Lỗi: ${result.message}`);
+                        }
+                    } catch (error) {
+                        alert('Lỗi kết nối Server khi xóa.');
+                    }
+                }
+            }
+            
+            // Xử lý nút SỬA
+            if (target.classList.contains('btn-edit')) {
+                if (type === 'product') {
+                    openEditModal('edit-product-modal', id, 'san-pham'); 
+                } else if (type === 'customer') {
+                    openEditModal('edit-customer-modal', id, 'khach-hang'); 
+                }
+            }
+            
+            // Xử lý nút IN HÓA ĐƠN
+             if (target.classList.contains('btn-invoice') && type === 'order') {
+                openInvoiceModal(id);
+            }
+            
+            // Xử lý các NÚT HÀNH ĐỘNG CỦA ĐƠN HÀNG
+            if (target.classList.contains('btn-action')) {
+                const id = target.dataset.id;
+                const nextStatus = target.dataset.nextStatus;
+                
+                if (confirm(`Bạn có chắc chắn muốn chuyển đơn hàng #${id} sang "${nextStatus}"?`)) {
+                    updateOrderStatus(id, nextStatus);
+                }
+            }
+            
+            // (MỚI) Xử lý Nút Trả Lời Đánh Giá
+             if (target.classList.contains('btn-reply')) {
+                 const id = target.dataset.id;
+                 handleReplyReview(id);
+             }
+             
+             // (MỚI) Xử lý Nút Thả Tim Đánh Giá
+             if (target.classList.contains('btn-like-review')) {
+                 const id = target.dataset.id;
+                 const currentLiked = target.dataset.liked === '1';
+                 handleLikeReview(id, currentLiked);
+             }
+        }
+
+        
+        // ----------------------------------------------------------------------
+        // KHỞI TẠO CHUNG
+        // ----------------------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Kiểm tra trạng thái đăng nhập
+            checkSession(); 
+
+            // 2. Gán sự kiện cho các form và nút
+            // document.getElementById('login-form').addEventListener('submit', handleLogin); // ĐÃ XÓA
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            
+            document.getElementById('add-employee-form').addEventListener('submit', handleAddEmployee);
+            document.getElementById('add-product-form').addEventListener('submit', handleAddProduct); 
+            document.getElementById('add-customer-form').addEventListener('submit', handleAddCustomer); // (MỚI)
+            
+            document.getElementById('edit-product-form').addEventListener('submit', handleUpdateProduct); 
+            document.getElementById('edit-customer-form').addEventListener('submit', handleUpdateCustomer); // (MỚI)
+            
+            document.getElementById('print-revenue-btn').addEventListener('click', handlePrintRevenue);
+            
+            // (MỚI) Gán sự kiện cho Nút tìm kiếm
+            document.getElementById('customer-search-btn').addEventListener('click', handleSearchCustomer);
+            document.getElementById('customer-search-input').addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') handleSearchCustomer();
+            });
+
+            // Gán sự kiện Click cho Bảng (Sửa/Xóa/In HĐ/Duyệt Đơn/Trả lời/Tim)
+            document.body.addEventListener('click', handleTableClick); 
+            
+            // (XÓA) Gán sự kiện thay đổi trạng thái Đơn hàng (đã gộp vào handleTableClick)
+            // document.body.addEventListener('change', handleUpdateOrderStatus); 
+            
+            // Gán sự kiện đóng Modal
+            document.body.addEventListener('click', closeModals); // (CẬP NHẬT)
+            
+            // (MỚI) Gán sự kiện cho Filter Tabs (Sản phẩm)
+            document.getElementById('product-category-filters').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    // Lấy tên category
+                    const categoryName = e.target.dataset.category;
+                    
+                    // Xóa "active" class khỏi tất cả các tab
+                    document.querySelectorAll('#product-category-filters .filter-tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    
+                    // Thêm "active" class cho tab vừa click
+                    e.target.classList.add('active');
+                    
+                    // Tải lại sản phẩm
+                    loadProducts(categoryName);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

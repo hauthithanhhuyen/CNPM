@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Cửa hàng Thời trang</title>
+    <!-- Thêm icon (ví dụ: Font Awesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <!-- Phần 1: Hình ảnh (Bên trái) -->
+        <div class="login-image-side">
+            <div class="image-overlay">
+                <h1 style="margin-bottom: 0.5em;">Chào mừng quý khách</h1>
+                <p style="opacity:0; height:0;">&nbsp;</p>
+            </div>
+            <!-- Bạn có thể thay ảnh này bằng ảnh thời trang đẹp -->
+            <img src="https://placehold.co/800x1000/e1e1e1/555?text=Quần+Áo+Mina" alt="Quần Áo Mina Image">
+        </div>
+
+        <!-- Phần 2: Form đăng nhập (Bên phải) -->
+        <div class="login-form-side">
+            <div class="login-container">
+                <div class="login-header">
+                    <i class="fas fa-tshirt logo-icon"></i>
+                    <h2>Đăng nhập Hệ thống</h2>
+                    <p>Sử dụng tài khoản (Admin, Nhân viên, Khách hàng)</p>
+                </div>
+                
+                <div id="error-message" class="message error"></div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username"><i class="fas fa-user"></i> Tên đăng nhập:</label>
+                        <input type="text" id="username" name="tenDangNhap" placeholder="Nhập tên tài khoản..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Mật khẩu:</label>
+                        <input type="password" id="password" name="matKhau" placeholder="Nhập mật khẩu..." required>
+                    </div>
+                    <button type="submit" class="btn-login" id="login-button">
+                        Đăng nhập <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <div style="text-align:center; margin-top:18px;">
+                    Chưa có tài khoản? <a href="register.html" style="color:#dd2476; font-weight:bold;">Đăng ký</a>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script xử lý logic đăng nhập (Giữ nguyên, không đổi) -->
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const errorMessage = document.getElementById('error-message');
+            const loginButton = document.getElementById('login-button');
+
+            errorMessage.style.display = 'none';
+            loginButton.disabled = true;
+            loginButton.innerHTML = 'Đang xử lý...';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    const userRole = result.user.role;
+                    if (userRole === 'Quản lý' || userRole === 'Nhân viên') {
+                        window.location.href = '/index.html'; 
+                    } else if (userRole === 'Khách hàng') {
+                        window.location.href = '/shop.html'; 
+                    } else {
+                        errorMessage.textContent = 'Vai trò người dùng không hợp lệ.';
+                        errorMessage.style.display = 'block';
+                    }
+                } else {
+                    errorMessage.textContent = result.message || 'Lỗi không xác định.';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'Lỗi kết nối Server. Vui lòng thử lại.';
+                errorMessage.style.display = 'block';
+            } finally {
+                loginButton.disabled = false;
+                loginButton.innerHTML = 'Đăng nhập <i class="fas fa-arrow-right"></i>';
+            }
+        });
+    </script>
+</body>
+</html>

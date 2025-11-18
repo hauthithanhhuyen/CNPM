@@ -1,0 +1,231 @@
+/* tryon.css - CSS cho trang Thử Đồ */
+
+/* --- CÀI ĐẶT CHUNG (Lấy từ shop.css) --- */
+/* (Phải có các nút này để các nút bấm hoạt động) */
+.btn-primary {
+    background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+    color: #fff;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1.08rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 2px 8px #dd247622;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #dd2476 0%, #ff512f 100%);
+        color: #fff;
+    }
+.btn-secondary {
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    color: #222;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1.08rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 2px 8px #43e97b22;
+    }
+    .btn-secondary:hover {
+        background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+        color: #fff;
+    }
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-danger:hover {
+    background: #c82333;
+}
+/* Thông báo */
+.message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: none; 
+}
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* --- CSS CHO TRANG TRY-ON --- */
+.tryon-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 18px;
+}
+
+.tryon-step-1, .tryon-step-2 {
+    border: 2px solid #ffb6c1;
+    padding: 22px 18px 18px 18px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fff 60%, #ffe3ec 100%);
+    box-shadow: 0 4px 18px #dd247622;
+}
+.shop-header {
+    background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+    padding: 1.5rem 0 1rem 0;
+    border-bottom: none;
+    box-shadow: 0 4px 16px rgba(221,36,118,0.10);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 2px 8px #d32f2f44;
+    letter-spacing: 2px;
+    text-decoration: none;
+    padding: 0.2em 1em;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.08);
+    transition: background 0.2s;
+}
+.logo:hover {
+    background: rgba(255,255,255,0.18);
+}
+
+.tryon-camera-box {
+    width: 100%;
+    height: 400px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+.tryon-camera-box video,
+.tryon-camera-box canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#tryon-placeholder {
+    text-align: center;
+    color: #aaa;
+}
+.tryon-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Grid quần áo */
+.tryon-clothes-grid {
+    height: 400px; /* Bằng chiều cao camera box */
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+}
+.tryon-clothing-item {
+    width: 100%;
+    height: 100px;
+    object-fit: contain; /* Hiển thị toàn bộ (quan trọng cho overlay) */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.tryon-clothing-item:hover {
+    transform: scale(1.05);
+    border-color: #007bff;
+}
+
+/* Kết quả */
+.tryon-result-box {
+    width: 100%;
+    max-width: 500px;
+    margin: 15px auto;
+    border: 2px dashed #007bff;
+    background: #f0f0f0;
+}
+.tryon-result-box canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.tryon-result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* --- (MỚI) CSS CHO TAB "ẢNH ĐÃ THỬ" --- */
+/* (Để ở đây để file shop.css của bạn không bị ảnh hưởng) */
+.tryon-history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+.tryon-history-item {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.tryon-history-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.btn-delete-tryon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(220, 53, 69, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 25px;
+    text-align: center;
+}
+.btn-delete-tryon:hover {
+    background: rgba(200, 30, 40, 1);
+}
+
+/* Fix responsive cho TryOn */
+@media (max-width: 768px) {
+    .tryon-container {
+        grid-template-columns: 1fr; /* Xếp chồng 2 cột */
+    }
+    .tryon-camera-box, .tryon-clothes-grid {
+        height: 300px; /* Giảm chiều cao trên mobile */
+    }
+}

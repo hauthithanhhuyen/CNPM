@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa Hàng Quần Áo</title>
+    <link rel="stylesheet" href="shop.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="shop-header">
+        <div style="text-align:center; color:#d32f2f; font-size:1.5em; font-weight:bold; margin: 10px 0; letter-spacing:1px;">Kính Chào Quý Khách</div>
+        <div class="shop-container header-content">
+            <a href="/shop.html" class="logo">Quần Áo Mina</a>
+            
+            <nav class="main-nav">
+                <a href="#" class="nav-link" data-view="shop-view">👕 Cửa Hàng</a>
+                <a href="#" class="nav-link" data-view="account-view">👤 Tài Khoản</a>
+                <a href="tryon.html" class="nav-link">✨ Thử Đồ (AI)</a>
+            </nav>
+
+            <div class="header-actions">
+                <div id="guest-links">
+                    <a href="/login.html" class="nav-link">Đăng Nhập</a>
+                    <a href="#" class="nav-link btn-register" data-view="register-view">Đăng Ký</a>
+                </div>
+                <div id="user-links" style="display: none;">
+                    <span id="welcome-user">Chào, </span>
+                    <button id="cart-button" class="nav-link cart-btn">🛒 Giỏ Hàng (<span id="cart-count">0</span>)</button>
+                    <button id="logout-button" class="nav-link">Đăng Xuất</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="shop-container">
+        
+        <div id="shop-view">
+            <h2>Sản Phẩm Của Chúng Tôi</h2>
+            
+            <div id="product-category-filters" class="category-filters">
+                </div>
+
+            <div id="product-list" class="product-grid">
+                </div>
+        </div>
+
+        <div id="account-view" style="display: none;">
+            <h2>Tài Khoản Của Tôi</h2>
+            
+            <div class="account-tabs">
+                <button class="account-tab active" data-tab="profile">Hồ Sơ Của Tôi</button>
+                <button class="account-tab" data-tab="orders">Lịch Sử Đơn Hàng</button>
+                <button class="account-tab" data-tab="tryon-history">📸 Ảnh Đã Thử</button>
+            </div>
+
+            <div class="account-content">
+                <div id="profile-tab" class="tab-pane active">
+                     <h3>Hồ Sơ Của Tôi</h3>
+                    <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+                    <div id="profile-message-container" class="message"></div>
+                    
+                    <form id="update-profile-form" class="account-form">
+                         <div class="form-group">
+                            <label>Tên Đăng Nhập:</label>
+                            <input type="text" id="accTenDangNhap" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Họ và Tên:</label>
+                            <input type="text" id="accHoTen" name="hoTen">
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="accEmail" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label>Số Điện Thoại:</label>
+                            <input type="text" id="accDienThoai" name="dienThoai">
+                        </div>
+                        <div class="form-group">
+                            <label>Địa Chỉ:</label>
+                            <textarea id="accDiaChi" name="diaChi" rows="3"></textarea>
+                        </div>
+                         <div class="form-group">
+                            <label>Giới Tính:</label>
+                            <select id="accGioiTinh" name="gioiTinh">
+                                <option value="Khác">Khác</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu mới (Bỏ trống nếu không đổi):</label>
+                            <input type="password" name="matKhau" placeholder="Nhập mật khẩu mới...">
+                        </div>
+                        <button type="submit" class="btn-primary">Lưu Thay Đổi</button>
+                    </form>
+                    
+                    <div class="danger-zone">
+                        <h3>Hủy Tài Khoản</h3>
+                        <p>Hành động này không thể hoàn tác. Tất cả dữ liệu của bạn sẽ bị xóa (nếu bạn chưa có đơn hàng nào).</p>
+                        <button id="delete-account-btn" class="btn-danger">Hủy Tài Khoản Của Tôi</button>
+                    </div>
+                </div>
+                
+                <div id="orders-tab" class="tab-pane">
+                    <h3>Lịch Sử Đơn Hàng</h3>
+                    <div id="order-history-list">
+                        </div>
+                </div>
+
+                <div id="tryon-history-tab" class="tab-pane">
+                    <h3>Ảnh Đã Thử Của Bạn</h3>
+                    <p>Đây là những hình ảnh bạn đã lưu từ tính năng "Thử Đồ".</p>
+                    <div id="tryon-history-message" class="message"></div>
+                    <div id="tryon-history-list" class="tryon-history-grid">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="register-view" style="display: none;">
+            <h2>Đăng Ký Tài Khoản Mới</h2>
+            <div id="register-message-container" class="message"></div>
+            <form id="register-form" class="account-form" style="max-width: 600px; margin: auto;">
+                 <div class="form-row">
+                    <div class="form-group">
+                        <label for="regHoTen">Họ và Tên:</label>
+                        <input type="text" id="regHoTen" name="hoTen" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regTenDangNhap">Tên Đăng Nhập:</label>
+                        <input type="text" id="regTenDangNhap" name="tenDangNhap" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regMatKhau">Mật Khẩu:</label>
+                        <input type="password" id="regMatKhau" name="matKhau" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regDienThoai">Điện Thoại:</label>
+                        <input type="text" id="regDienThoai" name="dienThoai">
+                    </div>
+                </div>
+                 <div class="form-row">
+                    <div class="form-group">
+                        <label for="regEmail">Email:</label>
+                        <input type="email" id="regEmail" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="regGioiTinh">Giới Tính:</label>
+                        <select id="regGioiTinh" name="gioiTinh">
+                            <option value="Khác">Khác</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="regDiaChi">Địa Chỉ:</label>
+                    <textarea id="regDiaChi" name="diaChi" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Đăng Ký</button>
+            </form>
+        </div>
+
+    </main>
+    
+    <div id="cart-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-modal" data-modal="cart-modal">&times;</span>
+            <h2>Giỏ Hàng Của Bạn</h2>
+            <div id="cart-message-container" class="message"></div>
+            <div id="cart-items-container"></div>
+            <div class="cart-summary">
+                <strong>Tổng Cộng: <span id="cart-total">0 đ</span></strong>
+            </div>
+            <div class="cart-actions">
+                <button id="checkout-cod-btn" class="btn-primary">Thanh toán khi nhận hàng (COD)</button>
+                <button id="checkout-qr-btn" class="btn-secondary">Chuyển khoản (Quét QR)</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="thank-you-modal" class="modal">
+         <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <span class="close-modal" data-modal="thank-you-modal">&times;</span>
+            <h2>Đặt Hàng Thành Công!</h2>
+            <p>Cảm ơn bạn đã mua hàng. Đơn hàng của bạn (<strong id="new-order-id"></strong>) đang được xử lý.</p>
+            <p>Bạn có thể theo dõi trạng thái đơn hàng trong mục <strong>Tài Khoản</strong>.</p>
+            <button class="btn-primary" data-view="account-view">Xem Lịch Sử Đơn Hàng</button>
+        </div>
+    </div>
+    
+    <div id="qr-code-modal" class="modal">
+         <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <span class="close-modal" data-modal="qr-code-modal">&times;</span>
+            <h2>Thanh toán Chuyển khoản</h2>
+            <p>Vui lòng quét mã QR dưới đây để thanh toán.</p>
+            <div id="qr-code-container">
+                <img id="qr-code-image" src="https://placehold.co/300x300/EEE/333?text=Dang+Tao+Ma" alt="QR Code Thanh toan" style="width: 300px; height: 300px; margin: auto; display: block;">
+            </div>
+            <div class="qr-details">
+                <p>Ngân hàng: <strong>Ngân hàng ABC (Demo)</strong></p>
+                <p>Số tài khoản: <strong>123456789</strong></p>
+                <p>Chủ tài khoản: <strong>Quần Áo Mina</strong></p>
+                <p>Số tiền: <strong id="qr-amount" style="color: red; font-size: 1.2rem;">0 đ</strong></p>
+                <p>Nội dung: <strong id="qr-content" style="color: #007bff;"></strong></p>
+            </div>
+            <hr>
+            <p>Sau khi thanh toán, vui lòng nhấn nút dưới đây để hoàn tất đơn hàng.</p>
+            <button id="qr-paid-btn" class="btn-primary" style="background-color: #28a745;">Tôi đã thanh toán (Tạo đơn hàng)</button>
+        </div>
+    </div>
+    
+    <div id="product-detail-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <span class="close-modal" data-modal="product-detail-modal">&times;</span>
+            <div id="product-detail-content" class="product-detail-grid"></div>
+            <hr>
+            <div class="detail-tabs">
+                <button class="detail-tab active" data-tab="detail-tab-desc">Mô Tả</button>
+                <button class="detail-tab" data-tab="detail-tab-reviews">Đánh Giá</button>
+            </div>
+            <div class="detail-tab-content">
+                <div id="detail-tab-desc" class="detail-tab-pane active"></div>
+                <div id="detail-tab-reviews" class="detail-tab-pane">
+                    <div id="review-form-container" style="display: none;">
+                        <h3>Viết đánh giá của bạn</h3>
+                        <div id="review-message-container" class="message"></div>
+                        <form id="review-form" class="add-form">
+                            <input type="hidden" id="reviewMaSanPham" name="maSanPham">
+                            <div class="form-group">
+                                <label>Chất lượng sản phẩm:</label>
+                                <div class="star-rating">
+                                    <input type="radio" id="star5" name="soSao" value="5" required/><label for="star5" title="5 sao">★</label>
+                                    <input type="radio" id="star4" name="soSao" value="4" required/><label for="star4" title="4 sao">★</label>
+                                    <input type="radio" id="star3" name="soSao" value="3" required/><label for="star3" title="3 sao">★</label>
+                                    <input type="radio" id="star2" name="soSao" value="2" required/><label for="star2" title="2 sao">★</label>
+                                    <input type="radio" id="star1" name="soSao" value="1" required/><label for="star1" title="1 sao">★</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewBinhLuan">Bình luận:</label>
+                                <textarea id="reviewBinhLuan" name="binhLuan" rows="4" placeholder="Sản phẩm này rất..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Gửi Đánh Giá</button>
+                        </form>
+                    </div>
+                    <div id="review-form-message"></div>
+                    <h3>Tất cả đánh giá</h3>
+                    <div id="review-list-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="review-order-modal" class="modal">
+         <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal" data-modal="review-order-modal">&times;</span>
+            <h2>Chọn Sản Phẩm Cần Đánh Giá</h2>
+            <p>Đơn hàng này có các sản phẩm sau. Vui lòng chọn 1 sản phẩm để viết đánh giá:</p>
+            <div id="review-order-products-list"></div>
+        </div>
+    </div>
+
+
+    <script>
+        // ----------------------------------------------------------------------
+        // CÁC HÀM TRỢ GIÚP (Helpers)
+        // ----------------------------------------------------------------------
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+        }
+
+        function showMessage(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.textContent = message;
+                container.className = `message ${type}`;
+                container.style.display = 'block';
+                setTimeout(() => {
+                    container.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function formatNgay(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+        };
+        
+        function getProductImageUrl(url) {
+            const placeholder = 'https://placehold.co/300x300/EEE/333?text=No+Image';
+            if (url && url.trim() !== '') {
+                return `src="${url}" onerror="this.src='${placeholder}';"`;
+            }
+            return `src="${placeholder}"`;
+        }
+
+        // ----------------------------------------------------------------------
+        // QUẢN LÝ TRẠNG THÁI (State)
+        // ----------------------------------------------------------------------
+        let G_USER_DATA = null; // Lưu thông tin người dùng
+        let G_CART = []; // Lưu giỏ hàng
+        let G_CURRENT_TOTAL = 0; // (MỚI) Lưu tổng tiền
+        
+        function loadCartFromStorage() {
+            const storedCart = localStorage.getItem('myShopCart');
+            G_CART = storedCart ? JSON.parse(storedCart) : [];
+            updateCartUI();
+        }
+        
+        function saveCartToStorage() {
+            localStorage.setItem('myShopCart', JSON.stringify(G_CART));
+            updateCartUI();
+        }
+        
+        function updateCartUI() {
+            const cartContainer = document.getElementById('cart-items-container');
+            const cartTotalEl = document.getElementById('cart-total');
+            const cartCountEl = document.getElementById('cart-count');
+            
+            // (SỬA LỖI) Kiểm tra các element tồn tại trước khi dùng
+            if (!cartContainer || !cartTotalEl || !cartCountEl) return;
+            
+            cartContainer.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            if (G_CART.length === 0) {
+                cartContainer.innerHTML = '<p style="text-align:center;">Giỏ hàng của bạn đang trống.</p>';
+            } else {
+                G_CART.forEach((item, index) => {
+                    const itemTotal = item.Gia * (item.SoLuong || 1); // Thêm || 1
+                    total += itemTotal;
+                    count += (item.SoLuong || 1);
+                    
+                    cartContainer.innerHTML += `
+                        <div class="cart-item">
+                            <img ${getProductImageUrl(item.HinhAnhURL)} alt="${item.TenSanPham}" style="width: 70px; height: 70px;">
+                            <div class="cart-item-info">
+                                <strong>${item.TenSanPham}</strong>
+                                <span>${formatCurrency(item.Gia)}</span>
+                            </div>
+                            <div class="cart-item-actions">
+                                <input type="number" class="cart-item-qty" value="${item.SoLuong}" min="1" data-index="${index}">
+                                <button class="btn-delete" data-index="${index}">Xóa</button>
+                            </div>
+                            <strong class="cart-item-total">${formatCurrency(itemTotal)}</strong>
+                        </div>
+                    `;
+                });
+            }
+            
+            cartTotalEl.textContent = formatCurrency(total);
+            cartCountEl.textContent = count;
+            G_CURRENT_TOTAL = total; 
+        }
+
+
+        // ----------------------------------------------------------------------
+        // ĐIỀU HƯỚNG VÀ HIỂN THỊ (Navigation)
+        // ----------------------------------------------------------------------
+        
+        function showView(viewId) {
+            document.getElementById('shop-view').style.display = 'none';
+            document.getElementById('account-view').style.display = 'none';
+            document.getElementById('register-view').style.display = 'none';
+            document.getElementById(viewId).style.display = 'block';
+            document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+        }
+        
+        // (CẬP NHẬT) Sửa lỗi logic hiển thị Tab
+        function showTab(tabId) {
+            document.querySelectorAll('.account-content .tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelectorAll('.account-tab').forEach(tab => tab.classList.remove('active'));
+            
+            const pane = document.getElementById(tabId);
+            if(pane) pane.classList.add('active');
+            
+            const tabButton = document.querySelector(`.account-tab[data-tab="${tabId.replace('-tab', '')}"]`);
+            if(tabButton) tabButton.classList.add('active');
+        }
+        
+        // (MỚI) Hàm chuyển tab trong Modal Chi tiết SP
+        function showDetailTab(tabId) {
+             document.querySelectorAll('.detail-tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelectorAll('.detail-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.detail-tab[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        // ----------------------------------------------------------------------
+        // LOGIC ĐĂNG NHẬP / ĐĂNG XUẤT / BẢO MẬT (CẬP NHẬT)
+        // ----------------------------------------------------------------------
+        
+        async function checkSession_Customer() {
+            try {
+                const response = await fetch('/api/check-session');
+                const result = await response.json();
+                
+                if (result.success && result.user.role === 'Khách hàng') {
+                    G_USER_DATA = result.user;
+                    document.getElementById('guest-links').style.display = 'none';
+                    document.getElementById('user-links').style.display = 'block';
+                    document.getElementById('welcome-user').textContent = `Chào, ${result.user.hoTen}`;
+                    loadAccountDetails(); 
+                    loadOrderHistory(); 
+                    loadTryOnHistory(); // (MỚI) Tải lịch sử ảnh đã thử
+                } else if (result.success) {
+                    window.location.href = 'index.html';
+                }
+                 else {
+                    G_USER_DATA = null;
+                    document.getElementById('guest-links').style.display = 'flex';
+                    document.getElementById('user-links').style.display = 'none';
+                }
+            } catch (error) {
+                G_USER_DATA = null;
+                document.getElementById('guest-links').style.display = 'flex';
+                document.getElementById('user-links').style.display = 'none';
+            }
+        }
+        
+        async function handleLogout_Customer() {
+            try {
+                await fetch('/api/logout');
+                G_USER_DATA = null;
+                checkSession_Customer(); 
+                showView('shop-view'); 
+            } catch (error) {
+                console.error('Lỗi đăng xuất:', error);
+            }
+        }
+        
+        // ----------------------------------------------------------------------
+        // LOGIC CỬA HÀNG (SHOP) VÀ GIỎ HÀNG (CART)
+        // ----------------------------------------------------------------------
+        
+        // Tải danh mục (Public)
+        async function loadCategories_Customer() {
+            const filterContainer = document.getElementById('product-category-filters');
+            try {
+                const response = await fetch('/api/public/categories'); // Dùng API Public
+                const result = await response.json();
+                if (result.success) {
+                    filterContainer.innerHTML = '';
+                    const allTab = document.createElement('button');
+                    allTab.className = 'filter-tab active';
+                    allTab.textContent = 'Tất cả';
+                    allTab.dataset.category = ''; 
+                    filterContainer.appendChild(allTab);
+                    
+                    result.data.forEach(cat => {
+                        const tab = document.createElement('button');
+                        tab.className = 'filter-tab';
+                        tab.textContent = cat.TenDanhMuc;
+                        tab.dataset.category = cat.TenDanhMuc;
+                        filterContainer.appendChild(tab);
+                    });
+                }
+            } catch (error) {
+                filterContainer.innerHTML = '<p class="message error">Lỗi tải danh mục.</p>';
+            }
+        }
+
+        // Tải sản phẩm (Public)
+        async function loadProducts_Customer(categoryName = '') {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '<p>Đang tải sản phẩm...</p>';
+            
+            try {
+                const response = await fetch(`/api/public/products?category=${encodeURIComponent(categoryName)}`);
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    productList.innerHTML = '';
+                    result.data.forEach(sp => {
+                        productList.innerHTML += `
+                            <div class="product-card" data-id="${sp.MaSanPham}">
+                                <img ${getProductImageUrl(sp.HinhAnhURL)} alt="${sp.TenSanPham}" class="product-clickable">
+                                <div class="product-info">
+                                    <h3 class="product-clickable">${sp.TenSanPham}</h3>
+                                    <p>${sp.TenDanhMuc || 'N/A'}</p>
+                                    <strong>${formatCurrency(parseFloat(sp.Gia))}</strong>
+                                    
+                                    <div class="product-actions">
+                                        <button class="btn-add-to-cart" 
+                                            data-id="${sp.MaSanPham}"
+                                            data-name="${sp.TenSanPham}"
+                                            data-price="${sp.Gia}"
+                                            data-img="${sp.HinhAnhURL || ''}"
+                                        >
+                                            Thêm vào giỏ
+                                        </button>
+                                        <button class="btn-buy-now" 
+                                            data-id="${sp.MaSanPham}"
+                                            data-name="${sp.TenSanPham}"
+                                            data-price="${sp.Gia}"
+                                            data-img="${sp.HinhAnhURL || ''}"
+                                        >
+                                            Mua Ngay
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else if (result.success && result.data.length === 0) {
+                    productList.innerHTML = `<p>Không có sản phẩm nào.</p>`;
+                } else {
+                    productList.innerHTML = `<p class="message error">${result.message}</p>`;
+                }
+            } catch (error) {
+                productList.innerHTML = `<p class="message error">Lỗi kết nối Server.</p>`;
+            }
+        }
+        
+        function handleAddToCart(event, showAlert = true) {
+            const btn = event.target;
+            const id = btn.dataset.id;
+            const existingItem = G_CART.find(item => item.MaSanPham === id);
+            
+            if (existingItem) {
+                existingItem.SoLuong += 1;
+            } else {
+                G_CART.push({
+                    MaSanPham: id,
+                    TenSanPham: btn.dataset.name,
+                    Gia: parseFloat(btn.dataset.price),
+                    HinhAnhURL: btn.dataset.img,
+                    SoLuong: 1
+                });
+            }
+            saveCartToStorage();
+            if (showAlert) {
+                alert('Đã thêm sản phẩm vào giỏ hàng!');
+            }
+        }
+        
+        function handleBuyNow(event) {
+            G_CART = [];
+            handleAddToCart(event, false); 
+            document.getElementById('cart-modal').style.display = 'block';
+        }
+        
+        function handleUpdateCartQty(event) {
+            const index = event.target.dataset.index;
+            const newQty = parseInt(event.target.value, 10);
+            
+            if (newQty > 0) {
+                G_CART[index].SoLuong = newQty;
+            } else {
+                G_CART.splice(index, 1);
+            }
+            saveCartToStorage();
+        }
+        
+        function handleDeleteCartItem(event) {
+            const index = event.target.dataset.index;
+            G_CART.splice(index, 1);
+            saveCartToStorage();
+        }
+        
+        async function handleCheckout() {
+            if (G_CART.length === 0) {
+                showMessage('cart-message-container', 'Giỏ hàng trống. Không thể thanh toán.', 'error');
+                return;
+            }
+            if (!G_USER_DATA) {
+                 showMessage('cart-message-container', 'Bạn phải đăng nhập để thanh toán.', 'error');
+                 setTimeout(() => {
+                     document.getElementById('cart-modal').style.display = 'none';
+                     window.location.href = 'login.html'; 
+                 }, 2000);
+                 return;
+            }
+            
+            const items = G_CART.map(item => ({
+                MaSanPham: item.MaSanPham,
+                SoLuong: item.SoLuong,
+                GiaLucDat: item.Gia 
+            }));
+
+            try {
+                const response = await fetch('/api/customer/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: items, tongTien: G_CURRENT_TOTAL })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    G_CART = []; 
+                    saveCartToStorage();
+                    document.getElementById('cart-modal').style.display = 'none';
+                    document.getElementById('qr-code-modal').style.display = 'none';
+                    document.getElementById('new-order-id').textContent = `#${result.orderId}`;
+                    document.getElementById('thank-you-modal').style.display = 'block';
+                } else {
+                    showMessage('cart-message-container', result.message, 'error');
+                    showMessage('qr-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                 showMessage('cart-message-container', 'Lỗi kết nối Server khi thanh toán.', 'error');
+                 showMessage('qr-message-container', 'Lỗi kết nối Server khi thanh toán.', 'error');
+            }
+        }
+        
+        function handleShowQR() {
+             if (G_CART.length === 0 || G_CURRENT_TOTAL === 0) {
+                showMessage('cart-message-container', 'Giỏ hàng trống. Không thể thanh toán.', 'error');
+                return;
+            }
+            if (!G_USER_DATA) {
+                 showMessage('cart-message-container', 'Bạn phải đăng nhập để thanh toán.', 'error');
+                 return;
+            }
+            const amount = G_CURRENT_TOTAL;
+            const content = `DH${G_USER_DATA.id}${Date.now()}`; 
+            const itemNames = G_CART.map(item => item.TenSanPham).join(', ');
+            const qrString = `TT: ${amount} | ND: ${content} | (${itemNames})`;
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrString)}`;
+            
+            document.getElementById('qr-code-image').src = qrApiUrl;
+            document.getElementById('qr-amount').textContent = formatCurrency(amount);
+            document.getElementById('qr-content').textContent = content;
+            
+            document.getElementById('cart-modal').style.display = 'none';
+            document.getElementById('qr-code-modal').style.display = 'block';
+        }
+
+        
+        // ----------------------------------------------------------------------
+        // LOGIC TÀI KHOẢN (ACCOUNT) VÀ ĐĂNG KÝ (REGISTER) (CẬP NHẬT)
+        // ----------------------------------------------------------------------
+        
+        async function loadOrderHistory() {
+            const container = document.getElementById('order-history-list');
+            container.innerHTML = '<p>Đang tải lịch sử đơn hàng...</p>';
+            
+            try {
+                // (SỬA LỖI) API NÀY BỊ THIẾU TRONG server.js
+                // Bạn PHẢI thêm API này vào server.js (xem lại phản hồi trước của tôi)
+                const response = await fetch('/api/customer/orders');
+                const result = await response.json();
+                
+                if (result.success && result.data.length > 0) {
+                    container.innerHTML = '';
+                    result.data.forEach(order => {
+                        let statusClass = '';
+                        let reviewButtonHtml = '';
+                        
+                        switch(order.TrangThai) {
+                            case 'Hoàn thành': 
+                                statusClass = 'status-completed'; 
+                                reviewButtonHtml = `<button class="btn-review-order" data-id="${order.MaDonHang}">Viết Đánh Giá</button>`;
+                                break;
+                            case 'Đã hủy': statusClass = 'status-cancelled'; break;
+                            case 'Đang giao': statusClass = 'status-shipping'; break;
+                            case 'Chờ Xác Nhận': statusClass = 'status-waiting'; break; 
+                            default: statusClass = 'status-processing'; 
+                        }
+                        
+                        container.innerHTML += `
+                            <div class="order-history-item">
+                                <div class="order-item-header">
+                                    <span>Mã ĐH: #${order.MaDonHang}</span>
+                                    <span class="order-status ${statusClass}">${order.TrangThai}</span>
+                                </div>
+                                <div class="order-item-body">
+                                    <p>Ngày đặt: ${formatNgay(order.NgayDatHang)}</p>
+                                    <p>Tổng tiền: <strong>${formatCurrency(parseFloat(order.TongTien))}</strong></p>
+                                    ${reviewButtonHtml}
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else if (result.success) {
+                     container.innerHTML = '<p>Bạn chưa có đơn hàng nào.</p>';
+                } else {
+                     container.innerHTML = `<p class="message error">${result.message}</p>`;
+                }
+            } catch (error) {
+                 container.innerHTML = `<p class="message error">Lỗi tải lịch sử đơn hàng. (Kiểm tra API /api/customer/orders)</p>`;
+            }
+        }
+        
+        async function loadAccountDetails() {
+            if (!G_USER_DATA) return;
+            
+            try {
+                const response = await fetch('/api/customer/profile');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById('accTenDangNhap').value = data.TenDangNhap;
+                    document.getElementById('accHoTen').value = data.HoTen;
+                    document.getElementById('accEmail').value = data.Email;
+                    document.getElementById('accDienThoai').value = data.DienThoai;
+                    document.getElementById('accDiaChi').value = data.DiaChi;
+                    document.getElementById('accGioiTinh').value = data.GioiTinh || 'Khác';
+                } else {
+                    showMessage('profile-message-container', result.message, 'error');
+                }
+                 
+            } catch (e) {
+                console.error("Lỗi load chi tiết tài khoản", e);
+                showMessage('profile-message-container', 'Lỗi kết nối khi tải hồ sơ.', 'error');
+            }
+        }
+        
+        async function handleUpdateCustomer_Profile(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`/api/customer/profile`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('profile-message-container', result.message, 'success');
+                    document.getElementById('welcome-user').textContent = `Chào, ${data.hoTen}`;
+                } else {
+                    showMessage('profile-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('profile-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        async function handleRegister(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/public/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showMessage('register-message-container', result.message, 'success');
+                    setTimeout(() => {
+                         window.location.href = 'login.html'; 
+                    }, 2000);
+                } else {
+                    showMessage('register-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('register-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        async function handleDeleteAccount() {
+            if (!G_USER_DATA) return;
+            
+            const ten = G_USER_DATA.username;
+            if (prompt(`Bạn có chắc chắn muốn HỦY tài khoản '${ten}'? Hành động này KHÔNG THỂ hoàn tác. Nhập 'DELETE' để xác nhận.`) === 'DELETE') {
+                try {
+                    const response = await fetch('/api/customer/delete-account', {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(result.message);
+                        handleLogout_Customer(); 
+                    } else {
+                        alert(`Lỗi: ${result.message}`);
+                    }
+                } catch (error) {
+                    alert('Lỗi kết nối Server.');
+                }
+            } else {
+                alert('Hành động đã được hủy.');
+            }
+        }
+        
+        // (MỚI) Tải lịch sử ảnh Try-On (API 22 từ server.js)
+        async function loadTryOnHistory() {
+            if (!G_USER_DATA) return;
+            const container = document.getElementById('tryon-history-list');
+            if (!container) return; 
+            container.innerHTML = '<p>Đang tải ảnh đã lưu...</p>';
+            
+            try {
+                const response = await fetch('/api/customer/tryon');
+                const result = await response.json(); 
+                
+                if (Array.isArray(result) && result.length > 0) {
+                    container.innerHTML = '';
+                    result.forEach(image => {
+                        container.innerHTML += `
+                            <div class="tryon-history-item">
+                                <img src="${image.url}" alt="Ảnh đã thử ${image.filename}">
+                                <button class="btn-delete-tryon" data-filename="${image.filename}">&times;</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<p>Bạn chưa lưu ảnh thử đồ nào.</p>';
+                }
+            } catch (error) {
+                showMessage('tryon-history-message', 'Lỗi tải lịch sử ảnh đã thử.', 'error');
+            }
+        }
+        
+        // (MỚI) Xóa ảnh Try-On (API 34 từ server.js)
+        async function handleDeleteTryOnImage(filename) {
+            if (!confirm(`Bạn có chắc muốn xóa ảnh này?`)) return;
+            
+            try {
+                const response = await fetch(`/api/customer/tryon/${filename}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('tryon-history-message', 'Đã xóa ảnh.', 'success');
+                    loadTryOnHistory(); 
+                } else {
+                    showMessage('tryon-history-message', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('tryon-history-message', 'Lỗi kết nối khi xóa ảnh.', 'error');
+            }
+        }
+
+        // ----------------------------------------------------------------------
+        // LOGIC XEM CHI TIẾT VÀ ĐÁNH GIÁ (Modal)
+        // ----------------------------------------------------------------------
+        
+        async function openProductDetailModal(id, options = {}) {
+             const modal = document.getElementById('product-detail-modal');
+            const content = document.getElementById('product-detail-content');
+            const descTab = document.getElementById('detail-tab-desc');
+            const reviewList = document.getElementById('review-list-container');
+            const reviewFormContainer = document.getElementById('review-form-container');
+            const reviewFormMessage = document.getElementById('review-form-message');
+            
+            content.innerHTML = '<p>Đang tải chi tiết sản phẩm...</p>';
+            descTab.innerHTML = '';
+            reviewList.innerHTML = '';
+            reviewFormContainer.style.display = 'none';
+            reviewFormMessage.innerHTML = '';
+            
+            modal.style.display = 'block';
+            
+             showDetailTab('detail-tab-desc');
+
+            try {
+                const response = await fetch(`/api/public/products/${id}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const { product, reviews, userStatus } = result.data;
+                    
+                    content.innerHTML = `
+                        <div class="product-detail-image">
+                            <img ${getProductImageUrl(product.HinhAnhURL)} alt="${product.TenSanPham}">
+                        </div>
+                        <div class="product-detail-info">
+                            <h2>${product.TenSanPham}</h2>
+                            <p>Danh mục: ${product.TenDanhMuc || 'N/A'}</p>
+                            <strong class="product-detail-price">${formatCurrency(parseFloat(product.Gia))}</strong>
+                            <div class="product-actions">
+                                <button class="btn-add-to-cart" data-id="${product.MaSanPham}" data-name="${product.TenSanPham}" data-price="${product.Gia}" data-img="${product.HinhAnhURL || ''}">Thêm vào giỏ</button>
+                                <button class="btn-buy-now" data-id="${product.MaSanPham}" data-name="${product.TenSanPham}" data-price="${product.Gia}" data-img="${product.HinhAnhURL || ''}">Mua Ngay</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    descTab.innerHTML = `<p>${product.MoTa ? product.MoTa.replace(/\n/g, '<br>') : 'Sản phẩm này chưa có mô tả.'}</p>`;
+                    
+                    if (reviews.length > 0) {
+                        reviewList.innerHTML = ''; // (SỬA LỖI) Xóa list cũ
+                        reviews.forEach(r => {
+                            let shopReplyHtml = '';
+                            if (r.ShopTraLoi) {
+                                shopReplyHtml = `
+                                    <div class="review-reply">
+                                        <strong>Shop Quần Áo đã trả lời:</strong>
+                                        <p>${r.ShopTraLoi}</p>
+                                    </div>
+                                `;
+                            }
+                            
+                            reviewList.innerHTML += `
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <strong>${r.TenKhachHang}</strong>
+                                        <span class="star-rating-display">${'★'.repeat(r.SoSao)}${'☆'.repeat(5 - r.SoSao)}</span>
+                                    </div>
+                                    <p class="review-comment">${r.BinhLuan || '<i>Không có bình luận</i>'}</p>
+                                    <span class="review-date">${formatNgay(r.NgayDanhGia)}</span>
+                                    ${shopReplyHtml}
+                                </div>
+                            `;
+                        });
+                    } else {
+                        reviewList.innerHTML = '<p>Sản phẩm này chưa có đánh giá nào.</p>';
+                    }
+                    
+                    document.getElementById('reviewMaSanPham').value = product.MaSanPham; 
+                    
+                    if (userStatus.isLoggedIn) {
+                        if (userStatus.hasReviewed) {
+                            reviewFormMessage.innerHTML = '<p class="message success">Bạn đã đánh giá sản phẩm này.</p>';
+                        } else if (userStatus.hasPurchased) {
+                            reviewFormContainer.style.display = 'block'; 
+                        } else {
+                            reviewFormMessage.innerHTML = '<p>Bạn phải mua sản phẩm này và đơn hàng đã hoàn thành mới có thể đánh giá.</p>';
+                        }
+                    } else {
+                        reviewFormMessage.innerHTML = '<p>Vui lòng <a href="/login.html">đăng nhập</a> để viết đánh giá.</p>';
+                    }
+                    
+                    if(options.switchToReviewTab) {
+                        showDetailTab('detail-tab-reviews');
+                    }
+                    
+                } else {
+                    content.innerHTML = `<p class="message error">${result.message}</p>`;
+                }
+            } catch (error) {
+                content.innerHTML = `<p class="message error">Lỗi kết nối Server.</p>`;
+            }
+        }
+        
+        async function handleReviewSubmit(event) {
+             event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/customer/review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('review-message-container', result.message, 'success');
+                    form.reset();
+                    document.getElementById('review-form-container').style.display = 'none'; 
+                    openProductDetailModal(data.maSanPham, { switchToReviewTab: true }); 
+                } else {
+                    showMessage('review-message-container', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('review-message-container', 'Lỗi kết nối Server.', 'error');
+            }
+        }
+        
+        async function openOrderReviewModal(orderId) {
+            const modal = document.getElementById('review-order-modal');
+            const listContainer = document.getElementById('review-order-products-list');
+            listContainer.innerHTML = '<p>Đang tải sản phẩm của đơn hàng...</p>';
+            modal.style.display = 'block';
+            
+            try {
+                const response = await fetch(`/api/customer/orders/${orderId}/details`);
+                const result = await response.json();
+                
+                if (result.success && result.items.length > 0) {
+                    listContainer.innerHTML = '';
+                    result.items.forEach(item => {
+                        listContainer.innerHTML += `
+                            <div class="review-order-item">
+                                <span>${item.TenSanPham} (SL: ${item.SoLuong})</span>
+                                <button class="btn-review-product" data-id="${item.MaSanPham}">Đánh Giá</button>
+                            </div>
+                        `;
+                    });
+                } else if (result.success) {
+                    listContainer.innerHTML = '<p>Đơn hàng này không có sản phẩm.</p>';
+                } else {
+                    listContainer.innerHTML = `<p class="message error">${result.message}</p>`;
+                }
+            } catch (error) {
+                 listContainer.innerHTML = `<p class="message error">Lỗi kết nối Server.</p>`;
+            }
+        }
+
+        
+        // ----------------------------------------------------------------------
+        // KHỞI TẠO CHUNG (Event Listeners)
+        // ----------------------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // (SỬA LỖI) Tải dữ liệu cơ bản (luôn luôn chạy)
+            checkSession_Customer(); 
+            loadCategories_Customer();
+            loadProducts_Customer(); 
+            loadCartFromStorage();
+
+            // (MỚI) Kiểm tra xem có cần chuyển tab Tài khoản không
+            const viewOnLoad = localStorage.getItem('viewOnLoad');
+            if (viewOnLoad === 'account-view') {
+                showView('account-view');
+                // Tự động nhảy đến tab "Ảnh Đã Thử"
+                setTimeout(() => { 
+                     const tryOnTab = document.querySelector('.account-tab[data-tab="tryon-history"]');
+                     if(tryOnTab) tryOnTab.click();
+                }, 100);
+                localStorage.removeItem('viewOnLoad'); 
+            } else {
+                showView('shop-view'); // Mặc định
+            }
+
+
+            // 2. Gán sự kiện cho Header
+            document.getElementById('logout-button').addEventListener('click', handleLogout_Customer);
+            document.getElementById('cart-button').addEventListener('click', () => {
+                document.getElementById('cart-modal').style.display = 'block';
+            });
+
+            // 3. Gán sự kiện Điều hướng (Navigation)
+            document.querySelectorAll('.nav-link[data-view]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewId = e.target.dataset.view;
+                    showView(viewId);
+                });
+            });
+            
+            // 4. Gán sự kiện Tabs (Tài khoản)
+            document.querySelectorAll('.account-tab').forEach(tab => {
+                 tab.addEventListener('click', (e) => {
+                     e.preventDefault();
+                     const tabId = e.target.dataset.tab + '-tab';
+                     showTab(tabId);
+                 });
+            });
+            
+             // 5. Gán sự kiện Form
+             document.getElementById('register-form').addEventListener('submit', handleRegister);
+             document.getElementById('update-profile-form').addEventListener('submit', handleUpdateCustomer_Profile);
+             document.getElementById('delete-account-btn').addEventListener('click', handleDeleteAccount); 
+             // (SỬA LỖI) Kiểm tra null trước khi gán sự kiện
+             const reviewForm = document.getElementById('review-form');
+             if (reviewForm) {
+                reviewForm.addEventListener('submit', handleReviewSubmit); 
+             }
+
+            // 6. Gán sự kiện Lọc Sản phẩm
+            document.getElementById('product-category-filters').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const categoryName = e.target.dataset.category;
+                    document.querySelectorAll('#product-category-filters .filter-tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                    loadProducts_Customer(categoryName);
+                }
+            });
+            
+            // 7. Gán sự kiện Cửa hàng (Thêm vào giỏ / Mua ngay / Xem Chi tiết)
+            document.getElementById('product-list').addEventListener('click', (e) => {
+                 if (e.target.classList.contains('btn-add-to-cart')) {
+                    handleAddToCart(e, true); 
+                }
+                 else if (e.target.classList.contains('btn-buy-now')) {
+                    handleBuyNow(e);
+                }
+                 else if (e.target.classList.contains('product-clickable')) {
+                     const card = e.target.closest('.product-card');
+                     openProductDetailModal(card.dataset.id);
+                 }
+            });
+
+            // 8. Gán sự kiện Giỏ hàng (Modal)
+            document.getElementById('cart-items-container').addEventListener('change', (e) => {
+                 if (e.target.classList.contains('cart-item-qty')) {
+                    handleUpdateCartQty(e);
+                }
+            });
+             document.getElementById('cart-items-container').addEventListener('click', (e) => {
+                 if (e.target.classList.contains('btn-delete')) {
+                    handleDeleteCartItem(e);
+                }
+            });
+            document.getElementById('checkout-cod-btn').addEventListener('click', handleCheckout);
+            document.getElementById('checkout-qr-btn').addEventListener('click', handleShowQR);
+            document.getElementById('qr-paid-btn').addEventListener('click', handleCheckout);
+            
+            // 9. Gán sự kiện Đóng Modal
+            document.body.addEventListener('click', (e) => {
+                 if (e.target.classList.contains('close-modal')) {
+                    const modalId = e.target.dataset.modal;
+                    document.getElementById(modalId).style.display = 'none';
+                }
+                if (e.target.dataset.view === 'account-view') {
+                    showView('account-view');
+                    showTab('profile-tab'); 
+                }
+            });
+            
+            // 10. Gán sự kiện cho Tabs (Chi tiết Sản phẩm)
+            document.querySelector('.detail-tabs').addEventListener('click', (e) => {
+                 if (e.target.classList.contains('detail-tab')) {
+                    const tabId = e.target.dataset.tab;
+                    showDetailTab(tabId);
+                 }
+            });
+            
+             // 11. Gán sự kiện cho Nút Đánh giá (Lịch sử Đơn hàng)
+            document.getElementById('order-history-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-review-order')) {
+                    const orderId = e.target.dataset.id;
+                    openOrderReviewModal(orderId);
+                }
+            });
+            
+            // 12. Gán sự kiện cho Nút Chọn SP Đánh giá (trong Modal)
+            document.getElementById('review-order-products-list').addEventListener('click', (e) => {
+                 if (e.target.classList.contains('btn-review-product')) {
+                     const productId = e.target.dataset.id;
+                     document.getElementById('review-order-modal').style.display = 'none';
+                     openProductDetailModal(productId, { switchToReviewTab: true });
+                 }
+            });
+            
+            
+            // (MỚI) 14. GÁN SỰ KIỆN CHO TAB "ẢNH ĐÃ THỬ"
+            document.getElementById('account-view').addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-delete-tryon')) {
+                    const filename = e.target.dataset.filename;
+                    handleDeleteTryOnImage(filename);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

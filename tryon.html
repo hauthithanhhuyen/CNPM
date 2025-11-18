@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thử Đồ (AI) - Quần Áo Mina</title>
+    <link rel="stylesheet" href="shop.css">
+    <link rel="stylesheet" href="tryon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <header class="shop-header">
+        <div style="text-align:center; color:#d32f2f; font-size:1.5em; font-weight:bold; margin: 10px 0; letter-spacing:1px;">Kính Chào Quý Khách</div>
+        <div class="shop-container header-content">
+            <a href="shop.html" class="logo">Quần Áo Mina</a>
+            
+            <nav class="main-nav">
+                <a href="shop.html" class="nav-link">👕 Cửa Hàng</a>
+                <a href="#" class="nav-link" id="nav-account-link">👤 Tài Khoản</a>
+                <a href="tryon.html" class="nav-link" style="color: #007bff;">✨ Thử Đồ (AI)</a>
+            </nav>
+
+            <div class="header-actions">
+                <div id="user-links" style="display: none;">
+                    <span id="welcome-user">Chào, </span>
+                    <button id="cart-button" class="nav-link cart-btn">🛒 Giỏ Hàng (<span id="cart-count">0</span>)</button>
+                </div>
+                <div id="guest-links" style="display: none;">
+                    <a href="/login.html" class="nav-link">Đăng Nhập</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="shop-container">
+        <h2>AI Try-On (Mô phỏng)</h2>
+        <div id="tryon-message-container" class="message"></div>
+        
+        <div class="tryon-container">
+            <div class="tryon-step-1">
+                <h3>Bước 1: Ảnh của bạn</h3>
+                <div class="tryon-camera-box">
+                    <video id="tryon-video" autoplay playsinline style="display:none;"></video>
+                    <canvas id="tryon-user-photo" style="display:none;"></canvas>
+                    <div id="tryon-placeholder">
+                        <i class="fas fa-camera" style="font-size: 40px; color: #ccc;"></i>
+                        <p>Bật camera hoặc tải ảnh lên</p>
+                    </div>
+                </div>
+                <div class="tryon-controls">
+                    <button id="tryon-start-camera-btn" class="btn-primary">Bật Camera</button>
+                    <button id="tryon-take-photo-btn" class="btn-secondary" style="display:none;">Chụp Ảnh</button>
+                    <input type="file" id="tryon-upload-input" accept="image/*" style="display: none;">
+                    <button id="tryon-upload-btn" class="btn-secondary">Tải ảnh lên</button>
+                </div>
+            </div>
+
+            <div class="tryon-step-2">
+                <h3>Bước 2: Chọn sản phẩm</h3>
+                <div id="tryon-clothes-list" class="tryon-clothes-grid">
+                    </div>
+            </div>
+        </div>
+
+        <hr>
+        
+        <div id="tryon-result-area" style="display:none;">
+            <h3>Bước 3: Kết quả</h3>
+            <div class="tryon-result-box">
+                <canvas id="tryon-result-canvas"></canvas>
+            </div>
+            <div class="tryon-result-actions">
+                <button id="tryon-save-disk-btn" class="btn-primary">Lưu về máy</button>
+                <button id="tryon-save-account-btn" class="btn-secondary">Lưu vào tài khoản</button>
+                <button id="tryon-reset-btn" class="btn-danger">Thử lại</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Fabric.js for drag/resize overlay -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="js/tryon.js"></script>
+
+</body>
+</html>

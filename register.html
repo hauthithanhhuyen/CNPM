@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - Quần Áo Mina</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-image-side">
+            <div class="image-overlay">
+                <h1>Chào mừng quý khách</h1>
+                <p style="opacity:0; height:0;">&nbsp;</p>
+            </div>
+            <img src="https://placehold.co/800x1000/e1e1e1/555?text=Quần+Áo+Mina" alt="Quần Áo Mina Image">
+        </div>
+        <div class="login-form-side">
+            <div class="login-container">
+                <div class="login-header">
+                    <i class="fas fa-user-plus logo-icon"></i>
+                    <h2>Đăng ký Tài khoản</h2>
+                    <p>Đăng ký để mua sắm và sử dụng các tính năng của Quần Áo Mina</p>
+                </div>
+                <div id="register-error-message" class="message error"></div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-username"><i class="fas fa-user"></i> Tên đăng nhập:</label>
+                        <input type="text" id="register-username" name="tenDangNhap" placeholder="Nhập tên tài khoản..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password"><i class="fas fa-lock"></i> Mật khẩu:</label>
+                        <input type="password" id="register-password" name="matKhau" placeholder="Nhập mật khẩu..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-fullname"><i class="fas fa-id-card"></i> Họ và tên:</label>
+                        <input type="text" id="register-fullname" name="hoTen" placeholder="Nhập họ và tên..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email"><i class="fas fa-envelope"></i> Email:</label>
+                        <input type="email" id="register-email" name="email" placeholder="Nhập email..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-phone"><i class="fas fa-phone"></i> Số điện thoại:</label>
+                        <input type="tel" id="register-phone" name="dienThoai" placeholder="Nhập số điện thoại..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-address"><i class="fas fa-map-marker-alt"></i> Địa chỉ:</label>
+                        <input type="text" id="register-address" name="diaChi" placeholder="Nhập địa chỉ...">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-gender"><i class="fas fa-venus-mars"></i> Giới tính:</label>
+                        <select id="register-gender" name="gioiTinh">
+                            <option value="">Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-login" id="register-button">
+                        Đăng ký <i class="fas fa-user-plus"></i>
+                    </button>
+                </form>
+                <div style="text-align:center; margin-top:18px;">
+                    Đã có tài khoản? <a href="login.html" style="color:#dd2476; font-weight:bold;">Đăng nhập</a>
+                    <br>
+                    <button onclick="window.location.href='login.html'" style="margin-top:10px; background:linear-gradient(90deg,#007bff,#0056b3);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:1rem;font-weight:bold;cursor:pointer;">Quay lại trang đăng nhập</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.getElementById('register-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        // Đảm bảo các trường không bị null
+        if (!data.tenDangNhap || !data.matKhau || !data.hoTen || !data.email || !data.dienThoai) {
+            const errorMessage = document.getElementById('register-error-message');
+            errorMessage.textContent = 'Vui lòng nhập đầy đủ thông tin bắt buộc.';
+            errorMessage.style.display = 'block';
+            return;
+        }
+        const errorMessage = document.getElementById('register-error-message');
+        errorMessage.style.display = 'none';
+        try {
+            const res = await fetch('/api/public/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert('Đăng ký thành công! Vui lòng đăng nhập.');
+                window.location.href = 'login.html';
+            } else {
+                errorMessage.textContent = result.message || 'Đăng ký thất bại.';
+                errorMessage.style.display = 'block';
+            }
+        } catch (err) {
+            errorMessage.textContent = 'Lỗi kết nối máy chủ.';
+            errorMessage.style.display = 'block';
+        }
+    });
+    </script>
+</body>
+</html>

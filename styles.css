@@ -1,0 +1,470 @@
+/* public/styles.css - CSS Gộp (ĐĂNG NHẬP ĐÃ BỊ XÓA) */
+
+/* --- 1. CSS CHO ĐĂNG NHẬP (ĐÃ XÓA) --- */
+/* (Toàn bộ CSS cho .login-container-wrapper, .login-container, .btn-login... đã được xóa) */
+
+
+/* --- 2. CSS CHUNG CHO ADMIN (file styles.css cũ) --- */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+}
+
+.admin-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #eee;
+    padding-bottom: 15px;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+h3 {
+    font-size: 1.3rem;
+    color: #444;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+/* Form chung (Thêm Nhân viên, Thêm Sản phẩm) */
+.add-form {
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+/* (MỚI) Bố cục 2 cột cho form Khách hàng */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+.form-row .form-group {
+    flex: 1; /* Chia đều 2 cột */
+}
+/*Responsive cho form 2 cột*/
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group input[type="email"], /* (MỚI) */
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+/* (MỚI) */
+.form-group input[disabled],
+.form-group textarea[disabled] {
+    background-color: #eee;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.btn-submit {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn-submit:hover {
+    background-color: #1e7e34;
+}
+
+/* (SỬA LỖI) Bảng chung (Tất cả các bảng) */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    font-size: 0.95rem;
+    table-layout: fixed; /* (MỚI) Giúp cột đều hơn */
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+    vertical-align: middle; 
+    word-wrap: break-word; /* (MỚI) Chống vỡ layout */
+}
+
+.admin-table th {
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+}
+
+.admin-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* (MỚI) Nút Sửa, Xóa, In HĐ, Duyệt Đơn trong bảng */
+.admin-table td .btn-delete,
+.admin-table td .btn-edit,
+.admin-table td .btn-invoice,
+.admin-table td .btn-action { /* (MỚI) Nút hành động chung */
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    margin-bottom: 5px; /* (MỚI) Xuống dòng nếu không đủ */
+    width: 100px; /* (MỚI) Cho các nút bằng nhau */
+    text-align: center;
+}
+.admin-table td .btn-edit {
+    background-color: #ffc107; /* Màu vàng */
+    color: #333;
+}
+.admin-table td .btn-delete {
+    background-color: #dc3545; /* Màu đỏ */
+}
+.admin-table td .btn-invoice {
+    background-color: #17a2b8; /* Màu xanh */
+}
+/* (MỚI) CSS cho các nút trạng thái đơn hàng */
+.admin-table td .btn-action {
+    color: #fff;
+}
+.admin-table td .btn-approve { /* Duyệt */
+    background-color: #28a745;
+}
+.admin-table td .btn-ship { /* Gửi hàng */
+    background-color: #007bff;
+}
+.admin-table td .btn-complete { /* Hoàn thành */
+    background-color: #ffc107;
+    color: #333;
+}
+.admin-table td .status-completed {
+    color: #28a745;
+    font-weight: bold;
+}
+.admin-table td .status-cancelled {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+
+.admin-table td .btn-edit:hover {
+    background-color: #e0a800;
+}
+.admin-table td .btn-delete:hover {
+    background-color: #c82333;
+}
+.admin-table td .btn-invoice:hover {
+    background-color: #138496;
+}
+.admin-table td .btn-action:hover {
+    opacity: 0.8;
+}
+
+
+/* Định dạng tiền tệ trong bảng */
+.revenue-amount, 
+.admin-table td:nth-child(4) /* Áp dụng cho cột Giá/Tổng tiền */
+{
+    font-weight: bold;
+    color: #0056b3;
+    text-align: right;
+}
+
+/* Thông báo lỗi/thành công */
+.message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    display: none; /* Ẩn mặc định */
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* --- 3. CSS CHO HEADER (Giữ nguyên) --- */
+.header {
+    background-color: #ffffff;
+    padding: 1rem 5%;
+    border-bottom: 2px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-info {
+    font-size: 1.1rem;
+    color: #333;
+}
+.user-info strong {
+    color: #0056b3;
+}
+.user-info span {
+    font-style: italic;
+    color: #555;
+}
+
+.btn-logout {
+    padding: 8px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
+
+/* --- (MỚI) 4. CSS CHO MODAL CHỈNH SỬA / IN HÓA ĐƠN --- */
+.modal {
+    display: none; /* Ẩn mặc định */
+    position: fixed; /* Nằm cố định */
+    z-index: 1000; /* Nằm trên cùng */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Cho phép cuộn nếu nội dung dài */
+    background-color: rgba(0,0,0,0.6); /* Lớp mờ màu đen */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* Canh giữa và cách 5% từ trên xuống */
+    padding: 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px; /* Giới hạn chiều rộng */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    animation: fadeIn 0.3s;
+}
+
+/* Hiệu ứng Pop-up */
+@keyframes fadeIn {
+    from {transform: scale(0.9); opacity: 0;}
+    to {transform: scale(1); opacity: 1;}
+}
+
+.close-modal {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal .add-form {
+    margin-bottom: 0; /* Bỏ margin cuối của form trong modal */
+}
+
+/* (MỚI) Style cho Hóa đơn (Invoice) */
+.invoice-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.invoice-header h3 {
+    margin: 0;
+    color: #007bff;
+}
+.invoice-customer {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* (MỚI) Thanh Tìm kiếm Khách hàng */
+.search-bar {
+    display: flex;
+    margin-bottom: 20px;
+}
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+}
+.search-bar button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+}
+
+/* --- (MỚI) 5. CSS CHO BỘ LỌC CATEGORY --- */
+.category-filters {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.filter-tab {
+    padding: 8px 15px;
+    font-size: 0.95rem;
+    border: 1px solid #007bff;
+    background-color: #ffffff;
+    color: #007bff;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.filter-tab:hover {
+    background-color: #f0f8ff;
+}
+.filter-tab.active {
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* --- (MỚI) 6. CSS CHO QUẢN LÝ ĐÁNH GIÁ (NHÂN VIÊN) --- */
+.staff-review-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: #fdfdfd;
+}
+.staff-review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap; /* Cho responsive */
+    gap: 10px;
+}
+.star-rating-display {
+    font-size: 1.2rem;
+    color: #ffc107;
+}
+.star-rating-display.sm {
+    font-size: 0.9rem;
+}
+.review-comment {
+    padding: 15px;
+    font-style: italic;
+    line-height: 1.6;
+}
+.staff-reply-area {
+    padding: 0 15px 15px 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.staff-reply-area textarea {
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 0.9rem;
+    resize: vertical;
+}
+.btn-reply {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+.btn-like-review {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+.btn-like-review.liked {
+    background-color: #e53935; /* Màu đỏ khi đã tim */
+}

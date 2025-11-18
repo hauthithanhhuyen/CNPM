@@ -1,0 +1,228 @@
+/* public/login.css - Giao diện đăng nhập hiện đại */
+
+/* --- Cài đặt cơ bản & Font chữ --- */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f9f9f9;
+    overflow: hidden; /* Ẩn thanh cuộn */
+}
+
+/* --- Bố cục 2 cột --- */
+.login-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+/* --- 1. Cột Hình ảnh (Bên trái) --- */
+.login-image-side {
+    flex: 1; /* Chiếm 50% */
+    position: relative;
+    overflow: hidden;
+    background: #333;
+}
+
+.login-image-side img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đảm bảo ảnh che phủ */
+    opacity: 0.5;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 60px;
+    box-sizing: border-box;
+    animation: slideInFromLeft 1s ease-out;
+}
+
+.image-overlay h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-shadow: 2px 4px 12px #d32f2f55;
+}
+
+.image-overlay p {
+    font-size: 1.25rem;
+    max-width: 400px;
+}
+
+/* --- 2. Cột Form (Bên phải) --- */
+.login-form-side {
+    flex: 1; /* Chiếm 50% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background: linear-gradient(135deg, #fff 60%, #ffe3ec 100%);
+    animation: fadeIn 1.2s ease-in-out;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-icon {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.login-header h2 {
+    font-size: 2.2rem;
+    color: #dd2476;
+    margin: 0 0 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* --- Form Inputs --- */
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: #007bff;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px 15px 15px 20px; /* Thêm padding cho icon */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; 
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+}
+
+/* --- Nút Đăng nhập --- */
+.btn-login {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-login i {
+    margin-left: 10px;
+    transition: transform 0.3s;
+}
+
+.btn-login:hover {
+    background: linear-gradient(90deg, #0056b3, #007bff);
+    box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+    transform: translateY(-2px);
+}
+
+.btn-login:hover i {
+    transform: translateX(5px);
+}
+
+.btn-login:disabled {
+    background: #a0a0a0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- Thông báo lỗi --- */
+.message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none; 
+    text-align: center;
+    font-size: 0.95rem;
+    animation: shake 0.5s;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* --- Hiệu ứng --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* --- Responsive (Cho điện thoại) --- */
+@media (max-width: 900px) {
+    .login-wrapper {
+        flex-direction: column;
+        overflow: auto;
+    }
+    
+    .login-image-side {
+        display: none; /* Ẩn ảnh nền trên điện thoại */
+    }
+
+    .login-form-side {
+        flex: 1;
+        padding: 20px;
+        height: 100vh;
+        align-items: flex-start; /* Căn lên đầu */
+        padding-top: 10vh;
+    }
+}
